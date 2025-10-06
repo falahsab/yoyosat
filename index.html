@@ -5,97 +5,97 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>بحث عن الرسيفر - معلومات وتحديثات</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass: rgba(255,255,255,0.03)}
-    *{box-sizing:border-box;font-family: "Segoe UI", Tahoma, "Noto Kufi Arabic", sans-serif}
-    body{margin:0;background:linear-gradient(180deg,#071021 0%, #071a2a 100%);color:#e6eef6;padding:28px}
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass: rgba(255,255,255,0.04)}
+    *{box-sizing:border-box;font-family:"Segoe UI", Tahoma, "Noto Kufi Arabic", sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#071021 0%, #071a2a 100%);color:#e6eef6;padding:28px;min-height:100vh}
     .container{max-width:980px;margin:0 auto}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    h1{font-size:20px;margin:0}
+    header{text-align:center;margin-bottom:18px}
+    h1{font-size:22px;margin:0}
 
-    .search-box{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .search-box{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px rgba(0,0,0,0.35)}
     .inputs{display:flex;gap:10px;align-items:center}
-    input[type=text]{flex:1;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;font-size:15px}
-    button{background:var(--accent);color:#012; padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
-    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+    input[type=text]{flex:1;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:inherit;font-size:15px}
+    button{background:var(--accent);color:#012;padding:11px 16px;border-radius:10px;border:none;cursor:pointer;transition:0.3s}
+    button:hover{opacity:0.9}
+    .hint{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 
-    .results{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-    .result-item{background:var(--glass);padding:10px;border-radius:8px;display:flex;gap:10px;align-items:center;cursor:pointer;border:1px solid transparent}
-    .result-item:hover{border-color:rgba(6,182,212,0.15)}
-    .thumb{width:56px;height:40px;border-radius:6px;background:#123;flex-shrink:0;overflow:hidden}
+    .results{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+    .result-item{background:var(--glass);backdrop-filter:blur(8px);padding:14px;border-radius:14px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s,border .3s;box-shadow:0 0 10px rgba(6,182,212,0.1)}
+    .result-item:hover{transform:translateY(-3px);border:1px solid rgba(6,182,212,0.3)}
+    .thumb{width:100%;height:150px;border-radius:10px;overflow:hidden;background:#123;margin-bottom:10px}
     .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .meta{flex:1}
-    .meta .name{font-weight:600}
-    .meta .small{font-size:12px;color:var(--muted)}
+    .meta{text-align:center}
+    .meta .name{font-weight:600;font-size:16px;margin-bottom:4px}
+    .meta .small{font-size:13px;color:var(--muted)}
 
     /* بطاقة التفاصيل */
-    .card{margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:none}
-    .card.show{display:block}
-    .card-head{display:flex;gap:12px;align-items:center}
-    .card-head .big-thumb{width:150px;height:100px;border-radius:10px;overflow:hidden}
-    .card-head .big-thumb img{width:100%;height:100%;object-fit:cover}
-    .card-head .info{flex:1}
-    .info h2{margin:0 0 6px 0}
+    .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px}
+    .overlay.show{display:flex}
+    .card{background:var(--card);border-radius:16px;max-width:600px;width:100%;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    .card-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .big-thumb{width:200px;height:130px;border-radius:12px;overflow:hidden;flex-shrink:0}
+    .big-thumb img{width:100%;height:100%;object-fit:cover}
+    .info{flex:1}
+    .info h2{margin:0 0 6px 0;font-size:20px}
     .info p{margin:0;color:var(--muted)}
 
-    .details{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px}
-    .detail{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px}
-    .detail b{display:block;margin-bottom:6px}
+    .details{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}
+    .detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center}
+    .detail b{display:block;margin-bottom:6px;color:var(--accent)}
 
-    .actions{margin-top:12px;display:flex;gap:8px}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .actions{margin-top:14px;text-align:center}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;margin:0 5px;transition:.3s}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 
-    footer{margin-top:26px;color:var(--muted);font-size:13px}
-
-    /* responsive */
-    @media (max-width:600px){.card-head{flex-direction:column;align-items:flex-start}.card-head .big-thumb{width:100%;height:160px}}
+    footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>بحث عن معلومات الرسيفر</h1>
+      <h1>🔍 بحث عن معلومات الرسيفر</h1>
     </header>
 
-    <section class="search-box" aria-label="Search receivers">
+    <section class="search-box">
       <div class="inputs">
-        <input id="search" type="text" placeholder="اكتب اسم الرسيفر أو جزء منه..." autocomplete="off">
-        <button id="clearBtn" title="مسح الإدخال">مسح</button>
+        <input id="search" type="text" placeholder="اكتب اسم الرسيفر..." autocomplete="off">
+        <button id="clearBtn">مسح</button>
       </div>
-      <div class="hint">البيانات تُجلب تلقائياً من ملف CSV خارجي.</div>
-
-      <div id="results" class="results" role="list"></div>
-
-      <div id="card" class="card" role="region" aria-live="polite">
-        <div class="card-head">
-          <div class="big-thumb"><img id="cardImg" src="" alt="صورة الرسيفر"></div>
-          <div class="info">
-            <h2 id="cardName">-</h2>
-            <p id="cardSummary">ملخص سريع</p>
-            <div class="actions">
-              <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">تحميل التحديث</a>
-              <button id="copyLink" class="btn-ghost">نسخ رابط</button>
-              <button id="closeCard" class="btn-ghost">إغلاق</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="details">
-          <div class="detail"><b>يدعم شيرنج</b><div id="cardShare">-</div></div>
-          <div class="detail"><b>نوع السيرفر</b><div id="cardServer">-</div></div>
-          <div class="detail"><b>إصدار آخر تحديث</b><div id="cardVersion">-</div></div>
-          <div class="detail"><b>تاريخ آخر تحديث</b><div id="cardDate">-</div></div>
-        </div>
-
-      </div>
+      <div class="hint">النتائج تظهر فقط بعد كتابة اسم والبحث عنه.</div>
+      <div id="results" class="results"></div>
     </section>
 
-    <footer>يتم جلب البيانات من ملف CSV — يمكنك تعديل الرابط في الكود.</footer>
+    <footer>يتم جلب البيانات من الملف: <code>csv/receivers.csv</code></footer>
+  </div>
+
+  <div id="overlay" class="overlay">
+    <div class="card">
+      <div class="card-head">
+        <div class="big-thumb"><img id="cardImg" src="" alt="صورة الرسيفر"></div>
+        <div class="info">
+          <h2 id="cardName">-</h2>
+          <p id="cardSummary">ملخص سريع</p>
+        </div>
+      </div>
+      <div class="details">
+        <div class="detail"><b>يدعم شيرنج</b><div id="cardShare">-</div></div>
+        <div class="detail"><b>نوع السيرفر</b><div id="cardServer">-</div></div>
+        <div class="detail"><b>إصدار آخر تحديث</b><div id="cardVersion">-</div></div>
+        <div class="detail"><b>تاريخ آخر تحديث</b><div id="cardDate">-</div></div>
+      </div>
+      <div class="actions">
+        <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">تحميل التحديث</a>
+        <button id="copyLink" class="btn-ghost">نسخ رابط</button>
+        <button id="closeCard" class="btn-ghost">إغلاق</button>
+      </div>
+    </div>
   </div>
 
   <script>
     const search = document.getElementById('search');
     const results = document.getElementById('results');
-    const card = document.getElementById('card');
+    const overlay = document.getElementById('overlay');
     const cardName = document.getElementById('cardName');
     const cardSummary = document.getElementById('cardSummary');
     const cardImg = document.getElementById('cardImg');
@@ -110,7 +110,6 @@
 
     let receivers = [];
 
-    // تحميل ملف CSV
     async function loadCSV(url){
       const res = await fetch(url);
       const text = await res.text();
@@ -129,28 +128,25 @@
           image: obj.image
         };
       });
-      renderResults(receivers);
     }
 
     function renderResults(list){
       results.innerHTML = '';
       if(list.length===0){
-        results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px">لا توجد نتائج</div>';
+        results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>';
         return;
       }
       list.forEach(r=>{
         const item = document.createElement('div');
         item.className = 'result-item';
-        item.tabIndex = 0;
         item.innerHTML = `
           <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
           <div class="meta">
             <div class="name">${r.name}</div>
-            <div class="small">${r.server_type} · تحديث: ${r.latest_version}</div>
+            <div class="small">${r.server_type} • تحديث ${r.latest_version}</div>
           </div>
         `;
         item.addEventListener('click', ()=> showCard(r));
-        item.addEventListener('keydown', (e)=>{ if(e.key==='Enter') showCard(r); });
         results.appendChild(item);
       });
     }
@@ -159,32 +155,29 @@
       cardName.textContent = r.name;
       cardSummary.textContent = `يدعم شيرنج: ${r.supports_sharing ? 'نعم' : 'لا'} — نوع السيرفر: ${r.server_type}`;
       cardImg.src = r.image;
-      cardImg.alt = r.name;
       cardShare.textContent = r.supports_sharing ? 'نعم' : 'لا';
       cardServer.textContent = r.server_type;
       cardVersion.textContent = r.latest_version;
       cardDate.textContent = r.latest_date;
       downloadLink.href = r.download;
-      downloadLink.textContent = r.download ? 'تحميل التحديث' : 'لا يوجد رابط';
-      copyLink.onclick = ()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1600)}); }
-      card.classList.add('show');
-      card.scrollIntoView({behavior:'smooth',block:'center'});
+      copyLink.onclick = ()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1600)}); };
+      overlay.classList.add('show');
     }
+
+    closeCard.addEventListener('click', ()=> overlay.classList.remove('show'));
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
 
     function performSearch(){
       const q = search.value.trim().toLowerCase();
-      if(!q){ renderResults(receivers); return; }
+      if(!q){results.innerHTML='';return;}
       const filtered = receivers.filter(r=> r.name.toLowerCase().includes(q) || r.server_type.toLowerCase().includes(q));
       renderResults(filtered);
     }
 
     search.addEventListener('input', performSearch);
-    clearBtn.addEventListener('click', ()=>{ search.value=''; performSearch(); search.focus(); });
-    closeCard.addEventListener('click', ()=> card.classList.remove('show'));
+    clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); });
 
-    // تحميل ملف CSV (ضع رابط ملفك هنا)
     loadCSV('csv/receivers.csv');
   </script>
 </body>
-
 </html>
