@@ -1,4 +1,4 @@
-name,supports_sharing,server_type,latest_date,latest_version,download,image
+name,supports_sharing,server_type,latest_version,latest_date,download,image
 SR-T50-SUPER,نعم,FUNCAM,21/09/25,v3.75,https://falahsab.github.io/centers/,
 SR-9990HD-EXTREME,نعم,FUNCAM,22/09/25,v3.76,https://falahsab.github.io/centers/,
 SR-9990HD-PLUS,نعم,FUNCAM,23/09/25,v3.77,https://falahsab.github.io/centers/,
@@ -83,3 +83,4 @@ Starsat 600 HD,نعم,FOREVER,10/12/25,v3.155,https://falahsab.github.io/centers
 Starsat 700 HD,نعم,FOREVER,11/12/25,v3.156,https://falahsab.github.io/centers/,
 
 Starsat 800 HD,نعم,FOREVER,12/12/25,v3.157,https://falahsab.github.io/centers/,
+
