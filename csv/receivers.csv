@@ -1,8 +1,8 @@
-name,supports_sharing,server_type,latest_version,latest_date,download,image
+name,supports_sharing,server_type,latest_date,latest_version,download,image
 SR-T50-SUPER,نعم,FUNCAM,21/09/25,v3.75,https://falahsab.github.io/centers/,
 SR-9990HD-EXTREME,نعم,FUNCAM,22/09/25,v3.76,https://falahsab.github.io/centers/,
 SR-9990HD-PLUS,نعم,FUNCAM,23/09/25,v3.77,https://falahsab.github.io/centers/,
-  SR-NANO,نعم,FUNCAM,24/09/25,v3.78,https://falahsab.github.io/centers/,
+SR-NANO,نعم,FUNCAM,24/09/25,v3.78,https://falahsab.github.io/centers/,
 SR-T20_EXTREME,نعم,FUNCAM,25/09/25,v3.79,https://falahsab.github.io/centers/,
 SR-T40HD-EXTREME,نعم,FUNCAM,26/09/25,v3.80,https://falahsab.github.io/centers/,
 SR-T20,نعم,FUNCAM,27/09/25,v3.81,https://falahsab.github.io/centers/,
@@ -15,17 +15,17 @@ SR-6969HD-EXTREME,نعم,FUNCAM,03/10/25,v3.87,https://falahsab.github.io/center
 SR-5959HD-EXTREME,نعم,FUNCAM,04/10/25,v3.88,https://falahsab.github.io/centers/,
 SR-5959HD-PLUS_V2.77_10042020,نعم,FUNCAM,05/10/25,v3.89,https://falahsab.github.io/centers/,
 SR-5959HD-PRO,نعم,FUNCAM,06/10/25,v3.90,https://falahsab.github.io/centers/,
-SR-5080HD_EXTREME,نعم,FUNCAM,07/10/25,v3.91,https://falahsab.github.io/centers/,
-SR-5090HD_EXTREME ,نعم,FUNCAM,08/10/25,v3.92,https://falahsab.github.io/centers/,
+SR-5080HD_EXTREME,نعم,FUNCAM,07/10/25,v3.91,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2020/12/5080hd-main-400x461.jpg
+SR-5090HD_EXTREME ,نعم,FUNCAM,08/10/25,v3.92,https://falahsab.github.io/centers/,https://starsat.com/starsat-sr-5090hd-extreme-full-hd-receiver/
 SR-5959HD,نعم,FUNCAM,09/10/25,v3.93,https://falahsab.github.io/centers/,
-SR-4080HD_EXTREME,نعم,FUNCAM,10/10/25,v3.94,https://falahsab.github.io/centers/,
-SR-4080HD_PLUS,نعم,FUNCAM,11/10/25,v3.95,https://falahsab.github.io/centers/,
-SR-4080HD,نعم,FUNCAM,12/10/25,v3.96,https://falahsab.github.io/centers/,
-SR-4080HD_VEGA,نعم,FUNCAM,13/10/25,v3.97,https://falahsab.github.io/centers/,
+SR-4080HD_EXTREME,نعم,FUNCAM,10/10/25,v3.94,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2020/12/1-2-1.jpg
+SR-4080HD_PLUS,نعم,FUNCAM,11/10/25,v3.95,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2020/12/1-2-1.jpg
+SR-4080HD,نعم,FUNCAM,12/10/25,v3.96,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2020/12/1-2-1.jpg
+SR-4080HD_VEGA,نعم,FUNCAM,13/10/25,v3.97,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2020/12/1-2-1.jpg
 SR-4090HD_EXTREME,نعم,FUNCAM,14/10/25,v3.98,https://falahsab.github.io/centers/,
 SR-4090HD,نعم,FUNCAM,15/10/25,v3.99,https://falahsab.github.io/centers/,
-SR-4070HD,نعم,FUNCAM,16/10/25,v3.100,https://falahsab.github.io/centers/,
-SR-4070HD_VEGA,نعم,FUNCAM,17/10/25,v3.101,https://falahsab.github.io/centers/,
+SR-4070HD,نعم,FUNCAM,16/10/25,v3.100,https://falahsab.github.io/centers/,https://starsat.com/starsat-sr-4070hd-full-hd-receiver/
+SR-4070HD_VEGA,نعم,FUNCAM,17/10/25,v3.101,https://falahsab.github.io/centers/,https://starsat.com/starsat-sr-4070hd-full-hd-receiver/
 SR-4077HD,نعم,FUNCAM,18/10/25,v3.102,https://falahsab.github.io/centers/,
 SR-2090HD_VEGA ,نعم,FUNCAM,19/10/25,v3.103,https://falahsab.github.io/centers/,
 SR-2090HD-EXTREME,نعم,FUNCAM,20/10/25,v3.104,https://falahsab.github.io/centers/,
@@ -56,7 +56,7 @@ Starsat X3 Pro,نعم,FOREVER,13/11/25,v3.128,https://falahsab.github.io/centers
 Starsat X1 Extreme,نعم,FOREVER,14/11/25,v3.129,https://falahsab.github.io/centers/,
 Starsat X1 Pro,نعم,FOREVER,15/11/25,v3.130,https://falahsab.github.io/centers/,
 Starsat 200 Extreme 4K Linux,نعم,FOREVER,16/11/25,v3.131,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2025/04/main-9-scaled.jpg
-Starsat 220 H 4K Linux,نعم,FOREVER,17/11/25,v3.132,https://falahsab.github.io/centers/,
+Starsat 220 H 4K Linux,نعم,FOREVER,17/11/25,v3.132,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2025/05/1-StarSat-SR-220H4K-UHD-10bit-Satellite-Receiver-Remotes4GUSBHDMI-YouTube-WiFi-USB-main-1.jpg
 Starsat 90000 Extreme,نعم,FOREVER,18/11/25,v3.133,https://falahsab.github.io/centers/,
 Starsat 2000 Extreme,نعم,FOREVER,19/11/25,v3.134,https://falahsab.github.io/centers/,
 Starsat 9090 Extreme,نعم,FOREVER,20/11/25,v3.135,https://falahsab.github.io/centers/,
@@ -72,7 +72,7 @@ Starsat 7080 HD,نعم,FOREVER,29/11/25,v3.144,https://falahsab.github.io/center
 Starsat 7080 Jordan V1,نعم,FOREVER,30/11/25,v3.145,https://falahsab.github.io/centers/,
 Starsat 7080 Jordan V2,نعم,FOREVER,01/12/25,v3.146,https://falahsab.github.io/centers/,
 Starsat 7090 HD,نعم,FOREVER,02/12/25,v3.147,https://falahsab.github.io/centers/,
-Starsat T30,نعم,FOREVER,03/12/25,v3.148,https://falahsab.github.io/centers/,
+Starsat T30,نعم,FOREVER,03/12/25,v3.148,https://falahsab.github.io/centers/,https://starsat.com/wp-content/uploads/2025/04/Main.jpg
 Starsat T30 PRO,نعم,FOREVER,04/12/25,v3.149,https://falahsab.github.io/centers/,
 Starsat T30 PRO Jordan V1,نعم,FOREVER,05/12/25,v3.150,https://falahsab.github.io/centers/,
 Starsat T30 PRO Jordan V2,نعم,FOREVER,06/12/25,v3.151,https://falahsab.github.io/centers/,
@@ -81,4 +81,5 @@ Starsat T60,نعم,FOREVER,08/12/25,v3.153,https://falahsab.github.io/centers/,
 Starsat T70,نعم,FOREVER,09/12/25,v3.154,https://falahsab.github.io/centers/,
 Starsat 600 HD,نعم,FOREVER,10/12/25,v3.155,https://falahsab.github.io/centers/,
 Starsat 700 HD,نعم,FOREVER,11/12/25,v3.156,https://falahsab.github.io/centers/,
+
 Starsat 800 HD,نعم,FOREVER,12/12/25,v3.157,https://falahsab.github.io/centers/,
