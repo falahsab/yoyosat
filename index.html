@@ -48,11 +48,11 @@ button:hover{opacity:0.9;}
 .detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center;}
 .detail b{display:block;margin-bottom:6px;color:var(--accent);}
 .actions{margin-top:14px;text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;display:flex;align-items:center;}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.actions svg{width:20px;height:20px;margin-left:6px;fill:#25D366;transition:0.3s;}
+.actions svg:hover{transform:scale(1.2);}
 footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center;}
-.whatsapp-icon{width:22px;height:22px;vertical-align:middle;fill:#25D366;cursor:pointer;transition:0.3s;}
-.whatsapp-icon:hover{transform:scale(1.2);}
 </style>
 </head>
 <body>
@@ -87,9 +87,12 @@ footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center;}
     </div>
     <div class="actions">
       <a id="downloadLink" class="btn-ghost" target="_blank">تحميل التحديث</a>
-      <svg id="whatsappShare" xmlns="http://www.w3.org/2000/svg" class="whatsapp-icon" viewBox="0 0 32 32">
-        <path d="M16.04 2.003c-7.732 0-14.01 6.278-14.01 14.01 0 2.47.643 4.88 1.87 7.004l-1.95 7.13 7.3-1.91c2.06 1.12 4.38 1.71 6.79 1.71h.01c7.73 0 14.01-6.28 14.01-14.01s-6.28-14.01-14.01-14.01zm0 25.5h-.01c-2.19 0-4.33-.56-6.2-1.61l-.44-.25-4.33 1.14 1.16-4.23-.28-.44c-1.15-1.82-1.76-3.93-1.76-6.1 0-6.35 5.17-11.52 11.52-11.52 3.08 0 5.98 1.2 8.16 3.38 2.18 2.18 3.38 5.08 3.38 8.16 0 6.35-5.17 11.52-11.52 11.52zm6.35-8.64c-.35-.18-2.09-1.03-2.41-1.15-.32-.12-.55-.18-.78.18-.23.35-.89 1.15-1.1 1.39-.2.23-.4.26-.75.09-.35-.18-1.47-.54-2.8-1.72-1.03-.92-1.72-2.06-1.92-2.41-.2-.35-.02-.54.15-.71.15-.15.35-.4.52-.6.18-.2.23-.35.35-.58.12-.23.06-.43-.03-.61-.09-.18-.78-1.87-1.07-2.56-.28-.68-.57-.59-.78-.6l-.66-.01c-.23 0-.6.09-.91.43-.32.35-1.2 1.17-1.2 2.85s1.23 3.3 1.4 3.53c.18.23 2.42 3.69 5.86 5.18.82.35 1.46.56 1.96.72.82.26 1.57.23 2.17.14.66-.1 2.09-.85 2.39-1.67.29-.82.29-1.52.2-1.67-.09-.14-.32-.23-.66-.4z"/>
-      </svg>
+      <a id="whatsappShare" class="btn-ghost" target="_blank">
+        واتساب
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <path d="M16.04 2.003c-7.732 0-14.01 6.278-14.01 14.01 0 2.47.643 4.88 1.87 7.004l-1.95 7.13 7.3-1.91c2.06 1.12 4.38 1.71 6.79 1.71h.01c7.73 0 14.01-6.28 14.01-14.01s-6.28-14.01-14.01-14.01zm0 25.5h-.01c-2.19 0-4.33-.56-6.2-1.61l-.44-.25-4.33 1.14 1.16-4.23-.28-.44c-1.15-1.82-1.76-3.93-1.76-6.1 0-6.35 5.17-11.52 11.52-11.52 3.08 0 5.98 1.2 8.16 3.38 2.18 2.18 3.38 5.08 3.38 8.16 0 6.35-5.17 11.52-11.52 11.52zm6.35-8.64c-.35-.18-2.09-1.03-2.41-1.15-.32-.12-.55-.18-.78.18-.23.35-.89 1.15-1.1 1.39-.2.23-.4.26-.75.09-.35-.18-1.47-.54-2.8-1.72-1.03-.92-1.72-2.06-1.92-2.41-.2-.35-.02-.54.15-.71.15-.15.35-.4.52-.6.18-.2.23-.35.35-.58.12-.23.06-.43-.03-.61-.09-.18-.78-1.87-1.07-2.56-.28-.68-.57-.59-.78-.6l-.66-.01c-.23 0-.6.09-.91.43-.32.35-1.2 1.17-1.2 2.85s1.23 3.3 1.4 3.53c.18.23 2.42 3.69 5.86 5.18.82.35 1.46.56 1.96.72.82.26 1.57.23 2.17.14.66-.1 2.09-.85 2.39-1.67.29-.82.29-1.52.2-1.67-.09-.14-.32-.23-.66-.4z"/>
+        </svg>
+      </a>
     </div>
   </div>
 </div>
@@ -112,7 +115,9 @@ const clearBtn = document.getElementById('clearBtn');
 const bigThumb = document.getElementById('bigThumb');
 
 let receivers = [];
+let currentReceiver = null;
 
+// جلب ملف CSV
 async function loadCSV(url){
   const res = await fetch(url);
   const text = await res.text();
@@ -125,6 +130,7 @@ async function loadCSV(url){
   });
 }
 
+// تحميل جميع الأنواع
 async function loadAll(){
   const types = await loadCSV('csv/types.csv');
   for(const t of types){
@@ -156,6 +162,7 @@ function renderResults(list){
 }
 
 function showCard(r){
+  currentReceiver = r;
   cardName.textContent = r.name;
   cardSummary.textContent = `نوع السيرفر: ${r.server_type||'-'}`;
   cardImg.src = r.image||'';
@@ -164,12 +171,7 @@ function showCard(r){
   cardVersion.textContent = r.latest_version||'-';
   cardDate.textContent = r.latest_date||'-';
   downloadLink.href = r.download||'#';
-
-  whatsappShare.onclick = ()=>{
-    const msg = `📺 *${r.name}*\n🔗 تحميل التحديث:\n${r.download||''}`;
-    const link = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    window.open(link,'_blank');
-  };
+  whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(`📺 ${r.name}\n🔗 تحميل التحديث:\n${r.download||''}`)}`;
 
   overlay.classList.add('show');
 }
@@ -190,4 +192,3 @@ loadAll();
 </script>
 </body>
 </html>
-
