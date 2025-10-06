@@ -49,9 +49,11 @@
     .detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center}
     .detail b{display:block;margin-bottom:6px;color:var(--accent)}
 
-    .actions{margin-top:14px;text-align:center}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;margin:0 5px;transition:.3s}
+    .actions{margin-top:14px;text-align:center;position:relative}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;margin:0 5px;transition:.3s;text-decoration:none}
     .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+    .whatsapp-share{position:absolute;left:10px;bottom:10px;background:none;border:none;cursor:pointer}
+    .whatsapp-share img{width:32px;height:32px;filter:brightness(1.2)}
 
     footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
   </style>
@@ -93,6 +95,9 @@
       <div class="actions">
         <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">تحميل التحديث</a>
         <button id="copyLink" class="btn-ghost">نسخ رابط</button>
+        <button id="whatsappShare" class="whatsapp-share">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
+        </button>
       </div>
     </div>
   </div>
@@ -113,13 +118,14 @@
     const closeCard = document.getElementById('closeCard');
     const clearBtn = document.getElementById('clearBtn');
     const bigThumb = document.getElementById('bigThumb');
+    const whatsappShare = document.getElementById('whatsappShare');
 
     let receivers = [];
 
     async function loadCSV(url){
       const res = await fetch(url);
       const text = await res.text();
-      const rows = text.trim().split(/\r?\n/).map(r=>r.split(','));
+      const rows = text.trim().split(/\\r?\\n/).map(r=>r.split(','));
       const headers = rows.shift();
       receivers = rows.map(r=>{
         const obj = {};
@@ -167,23 +173,25 @@
       cardDate.textContent = r.latest_date;
       downloadLink.href = r.download;
       copyLink.onclick = ()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1600)}); };
+      
+      whatsappShare.onclick = ()=>{
+        const msg = `📺 *${r.name}*\\n🧩 السيرفر: ${r.server_type}\\n📅 آخر تحديث: ${r.latest_date}\\n🔗 ${r.download}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+      };
+
       overlay.classList.add('show');
     }
 
     closeCard.addEventListener('click', ()=> overlay.classList.remove('show'));
     overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
-
-    bigThumb.addEventListener('click', ()=>{
-      bigThumb.classList.toggle('fullscreen');
-    });
-
+    bigThumb.addEventListener('click', ()=>{ bigThumb.classList.toggle('fullscreen'); });
     function performSearch(){
       const q = search.value.trim().toLowerCase();
       if(!q){results.innerHTML='';return;}
       const filtered = receivers.filter(r=> r.name.toLowerCase().includes(q) || r.server_type.toLowerCase().includes(q));
       renderResults(filtered);
     }
-
     search.addEventListener('input', performSearch);
     clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); });
 
