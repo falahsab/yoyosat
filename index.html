@@ -13,9 +13,9 @@
     h1{font-size:22px;margin:0}
 
     .search-box{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px rgba(0,0,0,0.35)}
-    .inputs{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    input[type=text]{flex:1 1 200px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:inherit;font-size:15px;min-width:0}
-    button{flex:0 0 auto;background:var(--accent);color:#012;padding:11px 16px;border-radius:10px;border:none;cursor:pointer;transition:0.3s}
+    .inputs{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    input[type=text]{flex:1;min-width:180px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:inherit;font-size:15px}
+    button{background:var(--accent);color:#012;padding:11px 16px;border-radius:10px;border:none;cursor:pointer;transition:0.3s;white-space:nowrap}
     button:hover{opacity:0.9}
     .hint{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 
@@ -39,7 +39,7 @@
     .card-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:30px}
     .big-thumb{width:200px;height:130px;border-radius:12px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .3s}
     .big-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .big-thumb.fullscreen{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2000;width:auto;height:auto;max-width:90%;max-height:90%;border-radius:14px}
+    .big-thumb.fullscreen{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.5);z-index:2000;width:auto;height:auto;max-width:90%;max-height:90%;border-radius:14px}
 
     .info{flex:1}
     .info h2{margin:0 0 6px 0;font-size:20px}
@@ -49,38 +49,33 @@
     .detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center}
     .detail b{display:block;margin-bottom:6px;color:var(--accent)}
 
-    .actions{margin-top:14px;text-align:center;display:flex;gap:12px;justify-content:center;align-items:center}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;display:flex;align-items:center;gap:6px}
+    .actions{margin-top:14px;text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
     .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-
-    .message{margin-top:12px;color:#ffcccb;text-align:center}
+    .btn-ghost img{width:20px;height:20px}
 
     footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>🔍 بحث عن معلومات الرسيفر</h1>
-    </header>
+    <header><h1>🔍 بحث عن معلومات الرسيفر</h1></header>
 
     <section class="search-box">
       <div class="inputs">
         <input id="search" type="text" placeholder="اكتب اسم الرسيفر..." autocomplete="off">
         <button id="clearBtn">مسح</button>
       </div>
-
-      <div class="hint">اكتب اسم الرسيفر لعرض النتائج.</div>
-      <div id="message" class="message" role="status" aria-live="polite"></div>
-      <div id="results" class="results" aria-live="polite"></div>
+      <div class="hint">النتائج تظهر فقط بعد كتابة اسم والبحث عنه.</div>
+      <div id="results" class="results"></div>
     </section>
 
-    <footer>المصدر الافتراضي: <code>csv/receivers.csv</code></footer>
+    <footer>يتم جلب البيانات من قاعدة داخلية (بدون تحميل CSV)</footer>
   </div>
 
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="card" role="document">
-      <button id="closeCard" class="close-btn" aria-label="إغلاق">✖</button>
+  <div id="overlay" class="overlay">
+    <div class="card">
+      <button id="closeCard" class="close-btn">✖</button>
       <div class="card-head">
         <div class="big-thumb" id="bigThumb"><img id="cardImg" src="" alt="صورة الرسيفر"></div>
         <div class="info">
@@ -95,93 +90,101 @@
         <div class="detail"><b>تاريخ آخر تحديث</b><div id="cardDate">-</div></div>
       </div>
       <div class="actions">
-        <button id="copyLink" class="btn-ghost">نسخ رابط</button>
-        <button id="whatsappShare" class="btn-ghost"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب" style="width:20px;height:20px;"> واتساب</button>
+        <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">⬇️ تحميل التحديث</a>
+        <button id="whatsappShare" class="btn-ghost">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="واتساب">مشاركة
+        </button>
       </div>
     </div>
   </div>
 
   <script>
-    const DEFAULT_CSV = 'https://raw.githubusercontent.com/falahsab/yoyosat/refs/heads/main/csv/receivers.csv';
-    const placeholderImage = 'https://via.placeholder.com/600x400?text=No+Image';
-
     const search = document.getElementById('search');
     const results = document.getElementById('results');
-    const message = document.getElementById('message');
-
     const overlay = document.getElementById('overlay');
-    const closeCard = document.getElementById('closeCard');
-    const cardImg = document.getElementById('cardImg');
-    const bigThumb = document.getElementById('bigThumb');
     const cardName = document.getElementById('cardName');
     const cardSummary = document.getElementById('cardSummary');
+    const cardImg = document.getElementById('cardImg');
     const cardShare = document.getElementById('cardShare');
     const cardServer = document.getElementById('cardServer');
     const cardVersion = document.getElementById('cardVersion');
     const cardDate = document.getElementById('cardDate');
-    const copyLink = document.getElementById('copyLink');
+    const downloadLink = document.getElementById('downloadLink');
     const whatsappShare = document.getElementById('whatsappShare');
+    const closeCard = document.getElementById('closeCard');
     const clearBtn = document.getElementById('clearBtn');
+    const bigThumb = document.getElementById('bigThumb');
 
-    let receivers = [];
-
-    async function fetchCSV(url){
-      try{
-        const res = await fetch(url);
-        const text = await res.text();
-        const rows = text.trim().split(/\r?\n/).map(r=>r.split(','));
-        const headers = rows.shift();
-        receivers = rows.map(r=>{
-          const obj = {};
-          headers.forEach((h,i)=> obj[h.trim()] = r[i]?.trim());
-          return {
-            name: obj.name,
-            supports_sharing: obj.supports_sharing === 'true' || obj.supports_sharing === 'نعم',
-            server_type: obj.server_type,
-            latest_version: obj.latest_version,
-            latest_date: obj.latest_date,
-            download: obj.download,
-            image: obj.image
-          };
-        });
-        message.textContent='';
-      }catch(err){
-        message.textContent = 'فشل جلب الملف.';
-        console.error(err);
+    // بيانات تجريبية بدل CSV
+    const receivers = [
+      {
+        name:"GX-9900",
+        supports_sharing:"نعم",
+        server_type:"Forever",
+        latest_version:"1.68",
+        latest_date:"2025-08-20",
+        download:"https://example.com/gx9900.bin",
+        image:"https://via.placeholder.com/400x250?text=GX-9900"
+      },
+      {
+        name:"StarMax 9000",
+        supports_sharing:"لا",
+        server_type:"Funcam",
+        latest_version:"2.12",
+        latest_date:"2025-09-01",
+        download:"https://example.com/starmax9000.bin",
+        image:"https://via.placeholder.com/400x250?text=StarMax+9000"
       }
-    }
+    ];
 
     function renderResults(list){
       results.innerHTML = '';
-      if(!list.length){ results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>'; return; }
+      if(list.length===0){
+        results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>';
+        return;
+      }
       list.forEach(r=>{
-        const item = document.createElement('div'); item.className='result-item';
-        item.innerHTML=`<div class="thumb"><img src="${r.image||placeholderImage}" alt="${r.name}"></div><div class="meta"><div class="name">${r.name}</div><div class="small">${r.server_type} • ${r.latest_version}</div></div>`;
-        item.addEventListener('click',()=>showCard(r));
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
+          <div class="meta"><div class="name">${r.name}</div>
+          <div class="small">${r.server_type} • تحديث ${r.latest_version}</div></div>`;
+        item.addEventListener('click', ()=> showCard(r));
         results.appendChild(item);
       });
     }
 
     function showCard(r){
-      cardName.textContent=r.name||'-';
-      cardSummary.textContent=`يدعم شيرنج: ${r.supports_sharing?'نعم':'لا'} — نوع السيرفر: ${r.server_type||'-'}`;
-      cardImg.src=r.image||placeholderImage;
-      cardShare.textContent=r.supports_sharing?'نعم':'لا';
-      cardServer.textContent=r.server_type||'-';
-      cardVersion.textContent=r.latest_version||'-';
-      cardDate.textContent=r.latest_date||'-';
-      copyLink.onclick=()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{ copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1500); }); };
-      whatsappShare.onclick=()=>{ const msg=`📺 ${r.name}\n🧩 السيرفر: ${r.server_type}\n📅 آخر تحديث: ${r.latest_date}\n🔗 ${r.download}`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank'); };
+      cardName.textContent = r.name;
+      cardSummary.textContent = `يدعم شيرنج: ${r.supports_sharing} — نوع السيرفر: ${r.server_type}`;
+      cardImg.src = r.image;
+      cardShare.textContent = r.supports_sharing;
+      cardServer.textContent = r.server_type;
+      cardVersion.textContent = r.latest_version;
+      cardDate.textContent = r.latest_date;
+      downloadLink.href = r.download;
+      whatsappShare.onclick = ()=>{
+        const text = `📺 ${r.name}\n🛰️ السيرفر: ${r.server_type}\n💾 التحديث: ${r.latest_version}\n🔗 رابط التحميل: ${r.download}`;
+        const encoded = encodeURIComponent(text);
+        window.open(`https://wa.me/?text=${encoded}`, '_blank');
+      };
       overlay.classList.add('show');
     }
 
-    closeCard.addEventListener('click',()=>overlay.classList.remove('show'));
-    overlay.addEventListener('click',e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
-    bigThumb.addEventListener('click',()=>bigThumb.classList.toggle('fullscreen'));
-    search.addEventListener('input',()=>{ const q=search.value.trim().toLowerCase(); renderResults(receivers.filter(r=>r.name.toLowerCase().includes(q)||r.server_type.toLowerCase().includes(q))); });
-    clearBtn.addEventListener('click',()=>{ search.value=''; results.innerHTML=''; search.focus(); });
+    closeCard.addEventListener('click', ()=> overlay.classList.remove('show'));
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
+    bigThumb.addEventListener('click', ()=> bigThumb.classList.toggle('fullscreen'));
 
-    fetchCSV(DEFAULT_CSV);
+    function performSearch(){
+      const q = search.value.trim().toLowerCase();
+      if(!q){results.innerHTML='';return;}
+      const filtered = receivers.filter(r=> r.name.toLowerCase().includes(q));
+      renderResults(filtered);
+    }
+
+    search.addEventListener('input', performSearch);
+    clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); });
   </script>
 </body>
 </html>
