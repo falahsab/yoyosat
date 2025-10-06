@@ -39,7 +39,7 @@
     .card-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:30px}
     .big-thumb{width:200px;height:130px;border-radius:12px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .3s}
     .big-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .big-thumb.fullscreen{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.5);z-index:2000;width:auto;height:auto;max-width:90%;max-height:90%;border-radius:14px}
+    .big-thumb.fullscreen{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2000;width:auto;height:auto;max-width:90%;max-height:90%;border-radius:14px}
 
     .info{flex:1}
     .info h2{margin:0 0 6px 0;font-size:20px}
@@ -55,13 +55,15 @@
     .whatsapp-share{position:absolute;left:10px;bottom:10px;background:none;border:none;cursor:pointer}
     .whatsapp-share img{width:32px;height:32px;filter:brightness(1.2)}
 
+    .message{margin-top:12px;color:#ffcccb;text-align:center}
+
     footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🔍 بحث عن معلومات الرسيفر</h1>
+      <h1>🔍 3بحث عن معلومات الرسيفر</h1>
     </header>
 
     <section class="search-box">
@@ -69,16 +71,24 @@
         <input id="search" type="text" placeholder="اكتب اسم الرسيفر..." autocomplete="off">
         <button id="clearBtn">مسح</button>
       </div>
-      <div class="hint">النتائج تظهر فقط بعد كتابة اسم والبحث عنه.</div>
-      <div id="results" class="results"></div>
+
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:10px">
+        <input id="fileInput" type="file" accept=".csv" style="color:#111;background:transparent;border-radius:8px;padding:6px">
+        <input id="csvUrl" type="text" placeholder="أو رابط CSV (اختياري)" style="width:60%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit">
+        <button id="loadBtn">تحميل</button>
+      </div>
+
+      <div class="hint">يمكن رفع ملف CSV محليًا أو وضع رابط ثم الضغط "تحميل". إذا فشل جلب الرابط سيتم محاولة تحويل رابط GitHub إلى raw أو استخدام proxy لسحب الملف.</div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div id="results" class="results" aria-live="polite"></div>
     </section>
 
-    <footer>يتم جلب البيانات من الملف: <code>csv/receivers.csv</code></footer>
+    <footer>المصدر الافتراضي: <code>csv/receivers.csv</code></footer>
   </div>
 
-  <div id="overlay" class="overlay">
-    <div class="card">
-      <button id="closeCard" class="close-btn">✖</button>
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="card" role="document">
+      <button id="closeCard" class="close-btn" aria-label="إغلاق">✖</button>
       <div class="card-head">
         <div class="big-thumb" id="bigThumb"><img id="cardImg" src="" alt="صورة الرسيفر"></div>
         <div class="info">
@@ -95,7 +105,7 @@
       <div class="actions">
         <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">تحميل التحديث</a>
         <button id="copyLink" class="btn-ghost">نسخ رابط</button>
-        <button id="whatsappShare" class="whatsapp-share">
+        <button id="whatsappShare" class="whatsapp-share" title="مشاركة عبر واتساب">
           <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
         </button>
       </div>
@@ -103,99 +113,228 @@
   </div>
 
   <script>
+    const DEFAULT_CSV = 'csv/receivers.csv';
+    const placeholderImage = 'https://via.placeholder.com/600x400?text=No+Image';
+
     const search = document.getElementById('search');
     const results = document.getElementById('results');
+    const message = document.getElementById('message');
+    const fileInput = document.getElementById('fileInput');
+    const csvUrlInput = document.getElementById('csvUrl');
+    const loadBtn = document.getElementById('loadBtn');
+
     const overlay = document.getElementById('overlay');
+    const closeCard = document.getElementById('closeCard');
+    const cardImg = document.getElementById('cardImg');
+    const bigThumb = document.getElementById('bigThumb');
     const cardName = document.getElementById('cardName');
     const cardSummary = document.getElementById('cardSummary');
-    const cardImg = document.getElementById('cardImg');
     const cardShare = document.getElementById('cardShare');
     const cardServer = document.getElementById('cardServer');
     const cardVersion = document.getElementById('cardVersion');
     const cardDate = document.getElementById('cardDate');
     const downloadLink = document.getElementById('downloadLink');
     const copyLink = document.getElementById('copyLink');
-    const closeCard = document.getElementById('closeCard');
-    const clearBtn = document.getElementById('clearBtn');
-    const bigThumb = document.getElementById('bigThumb');
     const whatsappShare = document.getElementById('whatsappShare');
+    const clearBtn = document.getElementById('clearBtn');
 
     let receivers = [];
 
-    async function loadCSV(url){
-      const res = await fetch(url);
-      const text = await res.text();
-      const rows = text.trim().split(/\\r?\\n/).map(r=>r.split(','));
-      const headers = rows.shift();
-      receivers = rows.map(r=>{
+    // تحويل روابط GitHub إلى raw.githubusercontent.com إذا أمكن
+    function toRawGithub(url){
+      try{
+        const gitRaw = url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/raw\/refs\/heads\/([^\/]+)\/(.+)$/i);
+        if(gitRaw) return `https://raw.githubusercontent.com/${gitRaw[1]}/${gitRaw[2]}/${gitRaw[3]}/${gitRaw[4]}`;
+        const blob = url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/i);
+        if(blob) return `https://raw.githubusercontent.com/${blob[1]}/${blob[2]}/${blob[3]}/${blob[4]}`;
+      }catch(e){}
+      return url;
+    }
+
+    async function fetchTextWithFallback(url){
+      const attempts = [url, toRawGithub(url), 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)];
+      let lastErr = null;
+      for(const u of attempts){
+        try{
+          const res = await fetch(u);
+          if(!res.ok) throw new Error('HTTP ' + res.status);
+          const txt = await res.text();
+          console.log('Fetched from', u);
+          return txt;
+        }catch(err){
+          console.warn('Fetch failed for', u, err);
+          lastErr = err;
+        }
+      }
+      throw lastErr || new Error('Fetch failed');
+    }
+
+    // محول CSV بسيط يدعم اقتباسات
+    function parseCSVToObjects(text, delim = ','){
+      if(!text) return [];
+      text = text.replace(/^\uFEFF/, '');
+      const rows = [];
+      let cur = '';
+      let row = [];
+      let inQuotes = false;
+      for(let i=0;i<text.length;i++){
+        const ch = text[i];
+        const next = text[i+1];
+        if(ch === '"'){
+          if(inQuotes && next === '"'){ cur += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+          continue;
+        }
+        if(ch === delim && !inQuotes){ row.push(cur); cur = ''; continue; }
+        if((ch === '\n' || ch === '\r') && !inQuotes){
+          if(ch === '\r' && next === '\n') { i++; }
+          row.push(cur);
+          rows.push(row);
+          row = [];
+          cur = '';
+          continue;
+        }
+        cur += ch;
+      }
+      if(cur !== '' || row.length > 0){ row.push(cur); rows.push(row); }
+      if(rows.length === 0) return [];
+      const headers = rows[0].map(h=> (h||'').trim());
+      const objects = [];
+      for(let r=1;r<rows.length;r++){
+        // skip empty lines
+        if(rows[r].length === 1 && (rows[r][0] || '').trim() === '') continue;
         const obj = {};
-        headers.forEach((h,i)=> obj[h.trim()] = r[i]?.trim());
+        for(let c=0;c<headers.length;c++){
+          obj[headers[c]] = (rows[r][c] || '').trim();
+        }
+        objects.push(obj);
+      }
+      return objects;
+    }
+
+    // Normalize headers to expected fields (makes CSV more tolerant)
+    function normalizeRecords(objs){
+      return objs.map(o=>{
+        const get = (...keys)=>{ for(const k of keys){ if(typeof o[k] !== 'undefined' && o[k] !== null) return o[k]; } return ''; };
         return {
-          name: obj.name,
-          supports_sharing: obj.supports_sharing === 'true' || obj.supports_sharing === 'نعم',
-          server_type: obj.server_type,
-          latest_version: obj.latest_version,
-          latest_date: obj.latest_date,
-          download: obj.download,
-          image: obj.image
+          name: get('name','Name','الاسم','model'),
+          supports_sharing: get('supports_sharing','supports','supportsSharing','يدعم_sharing','يدعم'),
+          server_type: get('server_type','server','type','سيرفر'),
+          latest_version: get('latest_version','version','latest','اصدار'),
+          latest_date: get('latest_date','date','تاريخ'),
+          download: get('download','url','link'),
+          image: get('image','img','image_url')
         };
       });
     }
 
+    async function loadCSVFromUrl(url){
+      message.textContent = 'تحميل...';
+      try{
+        const text = await fetchTextWithFallback(url);
+        const parsed = parseCSVToObjects(text);
+        receivers = normalizeRecords(parsed);
+        message.textContent = '';
+        console.log('Loaded receivers', receivers);
+      }catch(err){
+        console.error(err);
+        receivers = [];
+        message.textContent = 'فشل جلب الملف: ' + (err.message || err);
+      }
+    }
+
+    function loadCSVFromText(text){
+      try{
+        const parsed = parseCSVToObjects(text);
+        receivers = normalizeRecords(parsed);
+        message.textContent = '';
+      }catch(err){ receivers = []; message.textContent = 'فشل تحليل الملف.'; }
+    }
+
     function renderResults(list){
       results.innerHTML = '';
-      if(list.length===0){
+      if(!list || list.length === 0){
         results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>';
         return;
       }
       list.forEach(r=>{
-        const item = document.createElement('div');
-        item.className = 'result-item';
-        item.innerHTML = `
-          <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
-          <div class="meta">
-            <div class="name">${r.name}</div>
-            <div class="small">${r.server_type} • تحديث ${r.latest_version}</div>
-          </div>
-        `;
+        const item = document.createElement('div'); item.className = 'result-item';
+        const thumb = document.createElement('div'); thumb.className = 'thumb';
+        const img = document.createElement('img'); img.src = r.image || placeholderImage; img.alt = r.name || 'Receiver';
+        thumb.appendChild(img);
+        const meta = document.createElement('div'); meta.className = 'meta';
+        const name = document.createElement('div'); name.className = 'name'; name.textContent = r.name || '-';
+        const small = document.createElement('div'); small.className = 'small'; small.textContent = (r.server_type || '-') + ' • ' + (r.latest_version || '-');
+        meta.appendChild(name); meta.appendChild(small);
+        item.appendChild(thumb); item.appendChild(meta);
         item.addEventListener('click', ()=> showCard(r));
         results.appendChild(item);
       });
     }
 
     function showCard(r){
-      cardName.textContent = r.name;
-      cardSummary.textContent = `يدعم شيرنج: ${r.supports_sharing ? 'نعم' : 'لا'} — نوع السيرفر: ${r.server_type}`;
-      cardImg.src = r.image;
-      cardShare.textContent = r.supports_sharing ? 'نعم' : 'لا';
-      cardServer.textContent = r.server_type;
-      cardVersion.textContent = r.latest_version;
-      cardDate.textContent = r.latest_date;
-      downloadLink.href = r.download;
-      copyLink.onclick = ()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1600)}); };
-      
+      cardName.textContent = r.name || '-';
+      cardSummary.textContent = `يدعم شيرنج: ${(r.supports_sharing||'').toLowerCase()==='true' || (r.supports_sharing||'')==='نعم' ? 'نعم' : 'لا'} — نوع السيرفر: ${r.server_type||'-'}`;
+      cardImg.src = r.image || placeholderImage;
+      cardShare.textContent = (r.supports_sharing||'') || '-';
+      cardServer.textContent = r.server_type || '-';
+      cardVersion.textContent = r.latest_version || '-';
+      cardDate.textContent = r.latest_date || '-';
+      downloadLink.href = r.download || '#';
+      downloadLink.textContent = r.download ? 'تحميل التحديث' : 'لا يوجد رابط';
+
+      copyLink.onclick = ()=>{
+        const text = r.download || '';
+        navigator.clipboard.writeText(text).then(()=>{ copyLink.textContent = 'تم النسخ'; setTimeout(()=> copyLink.textContent = 'نسخ رابط',1500); }).catch(()=>{ copyLink.textContent = 'فشل النسخ'; setTimeout(()=> copyLink.textContent = 'نسخ رابط',1500); });
+      };
+
       whatsappShare.onclick = ()=>{
-        const msg = `📺 *${r.name}*\\n🧩 السيرفر: ${r.server_type}\\n📅 آخر تحديث: ${r.latest_date}\\n🔗 ${r.download}`;
+        const lines = [];
+        if(r.name) lines.push(`📺 ${r.name}`);
+        if(r.server_type) lines.push(`🧩 السيرفر: ${r.server_type}`);
+        if(r.latest_date) lines.push(`📅 آخر تحديث: ${r.latest_date}`);
+        if(r.download) lines.push(`🔗 ${r.download}`);
+        const msg = lines.join('\n');
         const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
         window.open(url, '_blank');
       };
 
-      overlay.classList.add('show');
+      overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
     }
 
-    closeCard.addEventListener('click', ()=> overlay.classList.remove('show'));
-    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
+    closeCard.addEventListener('click', ()=>{ overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); if(bigThumb.classList.contains('fullscreen')) bigThumb.classList.remove('fullscreen'); });
+    overlay.addEventListener('click', e=>{ if(e.target === overlay){ overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); if(bigThumb.classList.contains('fullscreen')) bigThumb.classList.remove('fullscreen'); } });
     bigThumb.addEventListener('click', ()=>{ bigThumb.classList.toggle('fullscreen'); });
+
     function performSearch(){
-      const q = search.value.trim().toLowerCase();
-      if(!q){results.innerHTML='';return;}
-      const filtered = receivers.filter(r=> r.name.toLowerCase().includes(q) || r.server_type.toLowerCase().includes(q));
+      const q = (search.value || '').trim().toLowerCase();
+      if(!q){ results.innerHTML = ''; return; }
+      const filtered = receivers.filter(r => (r.name||'').toLowerCase().includes(q) || (r.server_type||'').toLowerCase().includes(q));
       renderResults(filtered);
     }
-    search.addEventListener('input', performSearch);
-    clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); });
 
-    loadCSV('csv/receivers.csv');
+    search.addEventListener('input', performSearch);
+    clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); message.textContent=''; });
+
+    // تحميل من رابط/زر
+    loadBtn.addEventListener('click', async ()=>{
+      const url = (csvUrlInput.value || '').trim() || DEFAULT_CSV;
+      await loadCSVFromUrl(url);
+      results.innerHTML = '';
+    });
+
+    // رفع ملف محلي
+    fileInput.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{ loadCSVFromText(reader.result); results.innerHTML = ''; message.textContent = 'تم تحميل الملف محلياً. ابحث الآن.'; };
+      reader.onerror = ()=>{ message.textContent = 'خطأ في قراءة الملف المحلي.'; };
+      reader.readAsText(f);
+    });
+
+    // تحميل افتراضي عند البداية (يحاول الملف المحلي أولاً)
+    (async ()=>{ await loadCSVFromUrl(DEFAULT_CSV); })();
   </script>
 </body>
 </html>
