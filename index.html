@@ -32,8 +32,9 @@
     .overlay.show{display:flex}
     .card{position:relative;background:var(--card);border-radius:16px;max-width:600px;width:100%;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:fadeIn .4s ease}
     @keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-    .close-btn{position:absolute;top:10px;left:10px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:35px;height:35px;color:#fff;font-size:20px;cursor:pointer;transition:.3s}
-    .close-btn:hover{background:var(--accent);color:#000}
+
+    .close-btn{position:absolute;top:10px;left:14px;background:none;border:none;color:#fff;font-size:24px;font-weight:bold;cursor:pointer;transition:.3s;line-height:1}
+    .close-btn:hover{color:var(--accent);transform:scale(1.2)}
 
     .card-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:30px}
     .big-thumb{width:200px;height:130px;border-radius:12px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .3s}
