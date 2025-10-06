@@ -70,7 +70,7 @@
       <div id="results" class="results"></div>
     </section>
 
-    <footer>📁 يتم جلب البيانات تلقائيًا من ملف CSV على GitHub</footer>
+    <footer>📁 يتم جلب البيانات تلقائيًا من ملف CSV على ffff</footer>
   </div>
 
   <div id="overlay" class="overlay">
@@ -118,7 +118,7 @@
     let receivers = [];
 
     async function loadCSV() {
-      const url = "https://github.com/falahsab/yoyosat/raw/refs/heads/main/csv/receivers.csv";
+      const url = "csv/receivers.csv";
       try {
         const res = await fetch(url);
         const text = await res.text();
@@ -187,3 +187,4 @@
   </script>
 </body>
 </html>
+
