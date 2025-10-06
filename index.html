@@ -49,11 +49,9 @@
     .detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center}
     .detail b{display:block;margin-bottom:6px;color:var(--accent)}
 
-    .actions{margin-top:14px;text-align:center;position:relative}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;margin:0 5px;transition:.3s;text-decoration:none}
+    .actions{margin-top:14px;text-align:center;display:flex;gap:12px;justify-content:center;align-items:center}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;display:flex;align-items:center;gap:6px}
     .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-    .whatsapp-share{position:absolute;left:10px;bottom:10px;background:none;border:none;cursor:pointer}
-    .whatsapp-share img{width:32px;height:32px;filter:brightness(1.2)}
 
     .message{margin-top:12px;color:#ffcccb;text-align:center}
 
@@ -63,7 +61,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🔍 3بحث عن معلومات الرسيفر</h1>
+      <h1>🔍 بحث عن معلومات الرسيفر</h1>
     </header>
 
     <section class="search-box">
@@ -97,11 +95,8 @@
         <div class="detail"><b>تاريخ آخر تحديث</b><div id="cardDate">-</div></div>
       </div>
       <div class="actions">
-        <a id="downloadLink" class="btn-ghost" target="_blank" rel="noopener">تحميل التحديث</a>
         <button id="copyLink" class="btn-ghost">نسخ رابط</button>
-        <button id="whatsappShare" class="whatsapp-share" title="مشاركة عبر واتساب">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
-        </button>
+        <button id="whatsappShare" class="btn-ghost"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب" style="width:20px;height:20px;"> واتساب</button>
       </div>
     </div>
   </div>
@@ -124,7 +119,6 @@
     const cardServer = document.getElementById('cardServer');
     const cardVersion = document.getElementById('cardVersion');
     const cardDate = document.getElementById('cardDate');
-    const downloadLink = document.getElementById('downloadLink');
     const copyLink = document.getElementById('copyLink');
     const whatsappShare = document.getElementById('whatsappShare');
     const clearBtn = document.getElementById('clearBtn');
@@ -176,7 +170,6 @@
       cardServer.textContent=r.server_type||'-';
       cardVersion.textContent=r.latest_version||'-';
       cardDate.textContent=r.latest_date||'-';
-      downloadLink.href=r.download||'#';
       copyLink.onclick=()=>{ navigator.clipboard.writeText(r.download||'').then(()=>{ copyLink.textContent='تم النسخ'; setTimeout(()=>copyLink.textContent='نسخ رابط',1500); }); };
       whatsappShare.onclick=()=>{ const msg=`📺 ${r.name}\n🧩 السيرفر: ${r.server_type}\n📅 آخر تحديث: ${r.latest_date}\n🔗 ${r.download}`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank'); };
       overlay.classList.add('show');
