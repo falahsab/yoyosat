@@ -126,7 +126,7 @@ async function loadCSV(url){
 }
 
 async function loadAll(){
-  const types = await loadCSV('types.csv');
+  const types = await loadCSV('csv/types.csv');
   for(const t of types){
     if(t.file){
       const list = await loadCSV('csv/'+t.file);
@@ -190,3 +190,4 @@ loadAll();
 </script>
 </body>
 </html>
+
