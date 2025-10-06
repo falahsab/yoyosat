@@ -59,7 +59,7 @@
 </head>
 <body>
   <div class="container">
-    <header><h1>🔍 3بحث عن معلومات الرسيفر</h1></header>
+    <header><h1>🔍 بحث عن معلومات الرسيفر</h1></header>
 
     <section class="search-box">
       <div class="inputs">
@@ -70,7 +70,7 @@
       <div id="results" class="results"></div>
     </section>
 
-    <footer>يتم جلب البيانات من قاعدة داخلية (بدون تحميل CSV)</footer>
+    <footer>📁 يتم جلب البيانات تلقائيًا من ملف CSV على GitHub</footer>
   </div>
 
   <div id="overlay" class="overlay">
@@ -115,47 +115,44 @@
     const clearBtn = document.getElementById('clearBtn');
     const bigThumb = document.getElementById('bigThumb');
 
-    // بيانات تجريبية بدل CSV
-    const receivers = [
-      {
-        name:"GX-9900",
-        supports_sharing:"نعم",
-        server_type:"Forever",
-        latest_version:"1.68",
-        latest_date:"2025-08-20",
-        download:"https://example.com/gx9900.bin",
-        image:"https://via.placeholder.com/400x250?text=GX-9900"
-      },
-      {
-        name:"StarMax 9000",
-        supports_sharing:"لا",
-        server_type:"Funcam",
-        latest_version:"2.12",
-        latest_date:"2025-09-01",
-        download:"https://example.com/starmax9000.bin",
-        image:"https://via.placeholder.com/400x250?text=StarMax+9000"
-      }
-    ];
+    let receivers = [];
 
-    function renderResults(list){
+    async function loadCSV() {
+      const url = "https://github.com/falahsab/yoyosat/raw/refs/heads/main/csv/receivers.csv";
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
+        const headers = rows.shift();
+        receivers = rows.map(r => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h.trim()] = r[i]?.trim());
+          return obj;
+        });
+      } catch (e) {
+        console.error("فشل تحميل ملف CSV:", e);
+      }
+    }
+
+    function renderResults(list) {
       results.innerHTML = '';
-      if(list.length===0){
+      if (list.length === 0) {
         results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>';
         return;
       }
-      list.forEach(r=>{
+      list.forEach(r => {
         const item = document.createElement('div');
         item.className = 'result-item';
         item.innerHTML = `
           <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
           <div class="meta"><div class="name">${r.name}</div>
           <div class="small">${r.server_type} • تحديث ${r.latest_version}</div></div>`;
-        item.addEventListener('click', ()=> showCard(r));
+        item.addEventListener('click', () => showCard(r));
         results.appendChild(item);
       });
     }
 
-    function showCard(r){
+    function showCard(r) {
       cardName.textContent = r.name;
       cardSummary.textContent = `يدعم شيرنج: ${r.supports_sharing} — نوع السيرفر: ${r.server_type}`;
       cardImg.src = r.image;
@@ -164,28 +161,29 @@
       cardVersion.textContent = r.latest_version;
       cardDate.textContent = r.latest_date;
       downloadLink.href = r.download;
-      whatsappShare.onclick = ()=>{
-        const text = `📺 ${r.name}\n🛰️ السيرفر: ${r.server_type}\n💾 التحديث: ${r.latest_version}\n🔗 رابط التحميل: ${r.download}`;
-        const encoded = encodeURIComponent(text);
-        window.open(`https://wa.me/?text=${encoded}`, '_blank');
+
+      whatsappShare.onclick = () => {
+        const text = `📺 ${r.name}\n🛰️ السيرفر: ${r.server_type}\n💾 التحديث: ${r.latest_version}\n🔗 رابط التحميل: ${r.download}\n🖼️ ${r.image}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
       };
       overlay.classList.add('show');
     }
 
-    closeCard.addEventListener('click', ()=> overlay.classList.remove('show'));
-    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('show'); });
-    bigThumb.addEventListener('click', ()=> bigThumb.classList.toggle('fullscreen'));
+    closeCard.addEventListener('click', () => overlay.classList.remove('show'));
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
+    bigThumb.addEventListener('click', () => bigThumb.classList.toggle('fullscreen'));
 
-    function performSearch(){
+    function performSearch() {
       const q = search.value.trim().toLowerCase();
-      if(!q){results.innerHTML='';return;}
-      const filtered = receivers.filter(r=> r.name.toLowerCase().includes(q));
+      if (!q) { results.innerHTML = ''; return; }
+      const filtered = receivers.filter(r => r.name.toLowerCase().includes(q));
       renderResults(filtered);
     }
 
     search.addEventListener('input', performSearch);
-    clearBtn.addEventListener('click', ()=>{ search.value=''; results.innerHTML=''; search.focus(); });
+    clearBtn.addEventListener('click', () => { search.value = ''; results.innerHTML = ''; search.focus(); });
+
+    loadCSV();
   </script>
 </body>
 </html>
-
