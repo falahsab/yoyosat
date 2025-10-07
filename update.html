@@ -6,15 +6,12 @@
 <title>بحث عن الرسيفرات</title>
 <style>
 :root {
-  --bg: #0f1724; --card: #0b1220; --accent: #06b6d4;
-  --muted: #94a3b8; --glass: rgba(255,255,255,0.04);
+  --bg:#0f1724;--card:#0b1220;--accent:#06b6d4;
+  --muted:#94a3b8;--glass:rgba(255,255,255,0.04);
 }
-* {box-sizing:border-box;font-family:"Segoe UI","Noto Kufi Arabic",sans-serif;}
-body {
-  margin:0; background:linear-gradient(180deg,#071021,#071a2a);
-  color:#e6eef6; padding:28px; min-height:100vh;
-}
-.container {max-width:980px;margin:auto;}
+*{box-sizing:border-box;font-family:"Segoe UI","Noto Kufi Arabic",sans-serif;}
+body{margin:0;background:linear-gradient(180deg,#071021,#071a2a);color:#e6eef6;padding:28px;min-height:100vh;}
+.container{max-width:980px;margin:auto;}
 header{text-align:center;margin-bottom:18px;}
 h1{font-size:22px;margin:0;}
 .search-box{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px rgba(0,0,0,0.35);}
@@ -57,7 +54,7 @@ footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center;}
 </head>
 <body>
 <div class="container">
-  <header><h1>🔍 بحث عن الرسيفرات</h1></header>
+  <header><h1>🔍9 بحث عن الرسيفرات</h1></header>
   <section class="search-box">
     <div class="inputs">
       <input id="search" type="text" placeholder="اكتب اسم الرسيفر..." autocomplete="off">
@@ -113,21 +110,24 @@ const bigThumb = document.getElementById('bigThumb');
 let receivers = [];
 let currentReceiver = null;
 
-// جلب CSV td.csv
+// دالة لجلب CSV
 async function loadCSV(url){
-  const res = await fetch(url);
-  const text = await res.text();
-  const rows = text.trim().split(/\r?\n/).map(r=>r.split(','));
-  const headers = rows.shift();
-  return rows.map(r=>{
-    const obj = {};
-    headers.forEach((h,i)=> obj[h.trim()] = r[i]?.trim());
-    return obj;
-  });
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('فشل جلب CSV');
+    const text = await res.text();
+    const rows = text.replace(/^\uFEFF/,'').trim().split(/\r?\n/).map(r=>r.split(','));
+    const headers = rows.shift().map(h=>h.trim());
+    return rows.map(r=>{
+      const obj = {};
+      headers.forEach((h,i)=> obj[h]=r[i]?.trim()||'');
+      return obj;
+    });
+  }catch(e){console.error(e); return [];}
 }
 
 async function loadAll(){
-  receivers = await loadCSV('csv/‏‏starsat01.csv');
+  receivers = await loadCSV('csv/starsat01.csv');
 }
 
 function renderResults(list){
@@ -137,13 +137,13 @@ function renderResults(list){
     return;
   }
   list.forEach(r=>{
-    const item = document.createElement('div');
+    const item=document.createElement('div');
     item.className='result-item';
     item.innerHTML=`
-      <div class="thumb"><img src="${r.image||''}" alt="${r.name}"></div>
+      <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
       <div class="meta">
         <div class="name">${r.name}</div>
-        <div class="small">الحجم: ${r.size||'-'}</div>
+        <div class="small">الحجم: ${r.size}</div>
       </div>
     `;
     item.addEventListener('click',()=>showCard(r));
@@ -154,10 +154,10 @@ function renderResults(list){
 function showCard(r){
   currentReceiver = r;
   cardName.textContent = r.name;
-  cardSummary.textContent = `الحجم: ${r.size||'-'}`;
-  cardImg.src = r.image||'';
-  cardSize.textContent = r.size||'-';
-  cardDate.textContent = r.date||'-';
+  cardSummary.textContent = `الحجم: ${r.size}`;
+  cardImg.src = r.image;
+  cardSize.textContent = r.size;
+  cardDate.textContent = r.date;
   const downloadURL = `https://swdw.net/index.php/table/${r.name}/download`;
   downloadLink.href = downloadURL;
   whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(`📺 ${r.name}\n🔗 تحميل التحديث:\n${downloadURL}`)}`;
