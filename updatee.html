@@ -179,22 +179,28 @@ async function loadAll(){
 }
 
 function renderResults(list){
-  results.innerHTML='';
-  if(list.length===0){
-    results.innerHTML='<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج</div>';
+  results.innerHTML = '';
+  if(list.length === 0){
+    results.innerHTML = '<div style="color:var(--muted);padding:12px;text-align:center">لا توجد نتائج</div>';
     return;
   }
-  list.forEach(r=>{
-    const item=document.createElement('div');
-    item.className='result-item';
-    item.innerHTML=`
+
+  list.forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+
+    // 🔸 تنظيف الاسم من الأجزاء الزائدة مثل -26092025-zip أو -bin
+    let shortName = r.name.replace(/[-_]\d{6,8}[-_](zip|bin|rar|tar).*$/i, '');
+    shortName = shortName.replace(/[-_](zip|bin|rar)$/i, ''); // احتياط إضافي
+
+    item.innerHTML = `
       <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
       <div class="meta">
-        <div class="name">${r.name}</div>
-        <div class="small">الحجم: ${r.size}</div>
+        <div class="name">${shortName}</div>
+        <div class="small">آخر تحديث: ${r.latest_date || '-'}</div>
       </div>
     `;
-    item.addEventListener('click',()=>showCard(r));
+    item.addEventListener('click', () => showCard(r));
     results.appendChild(item);
   });
 }
@@ -228,3 +234,4 @@ loadAll();
 </script>
 </body>
 </html>
+
