@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>بحث عن الرسيفرات</title>
+<title>🔍 بحث عن الرسيفرات</title>
 <style>
 :root {
   --bg:#0f1724;--card:#0b1220;--accent:#06b6d4;
@@ -22,54 +22,15 @@ button:hover{opacity:0.9;}
 .hint{color:var(--muted);font-size:13px;margin-top:8px;text-align:center;}
 
 /* النتائج */
-.results {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-.result-item {
-  background: var(--glass);
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: background 0.2s, border-color 0.2s;
-}
-.result-item:hover {
-  border-color: rgba(6,182,212,0.15);
-  background: rgba(255,255,255,0.03);
-}
-.thumb {
-  width: 42px;
-  height: 42px;
-  border-radius: 6px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.meta .name {
-  font-weight: 600;
-  font-size: 15px;
-}
-.meta .small {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
-}
+.results {margin-top:12px;display:grid;grid-template-columns:1fr;gap:8px;}
+.result-item {background:var(--glass);padding:10px;border-radius:8px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid transparent;transition:background 0.2s,border-color 0.2s;position:relative;}
+.result-item:hover {border-color:rgba(6,182,212,0.15);background:rgba(255,255,255,0.03);}
+.thumb {width:42px;height:42px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+.thumb img {width:100%;height:100%;object-fit:cover;display:block;}
+.meta {flex:1;display:flex;flex-direction:column;}
+.meta .name {font-weight:600;font-size:15px;}
+.meta .small {font-size:12px;color:var(--muted);margin-top:2px;}
+.new-badge {position:absolute;right:10px;top:10px;background:#06b6d4;color:#012;padding:2px 6px;font-size:11px;border-radius:6px;font-weight:bold;}
 
 /* البطاقة المنبثقة */
 .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px;}
@@ -117,131 +78,124 @@ footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center;}
       <div class="big-thumb" id="bigThumb"><img id="cardImg" src="" alt=""></div>
       <div class="info">
         <h2 id="cardName">-</h2>
-        <p id="cardSummary">ملخص</p>
+        <p id="cardSummary">-</p>
       </div>
     </div>
     <div class="details">
-      <div class="detail"><b>الحجم</b><div id="cardSize">-</div></div>
+      <div class="detail"><b>الإصدار</b><div id="cardVersion">-</div></div>
       <div class="detail"><b>تاريخ التحديث</b><div id="cardDate">-</div></div>
     </div>
     <div class="actions">
       <a id="downloadLink" class="btn-ghost" target="_blank">تحميل التحديث</a>
       <a id="whatsappShare" class="btn-ghost" target="_blank">
         واتساب
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-          <path d="M16.04 2.003c-7.732 0-14.01 6.278-14.01 14.01 0 2.47.643 4.88 1.87 7.004l-1.95 7.13 7.3-1.91c2.06 1.12 4.38 1.71 6.79 1.71h.01c7.73 0 14.01-6.28 14.01-14.01s-6.28-14.01-14.01-14.01zm0 25.5h-.01c-2.19 0-4.33-.56-6.2-1.61l-.44-.25-4.33 1.14 1.16-4.23-.28-.44c-1.15-1.82-1.76-3.93-1.76-6.1 0-6.35 5.17-11.52 11.52-11.52 3.08 0 5.98 1.2 8.16 3.38 2.18 2.18 3.38 5.08 3.38 8.16 0 6.35-5.17 11.52-11.52 11.52zm6.35-8.64c-.35-.18-2.09-1.03-2.41-1.15-.32-.12-.55-.18-.78.18-.23.35-.89 1.15-1.1 1.39-.2.23-.4.26-.75.09-.35-.18-1.47-.54-2.8-1.72-1.03-.92-1.72-2.06-1.92-2.41-.2-.35-.02-.54.15-.71.15-.15.35-.4.52-.6.18-.2.23-.35.35-.58.12-.23.06-.43-.03-.61-.09-.18-.78-1.87-1.07-2.56-.28-.68-.57-.59-.78-.6l-.66-.01c-.23 0-.6.09-.91.43-.32.35-1.2 1.17-1.2 2.85s1.23 3.3 1.4 3.53c.18.23 2.42 3.69 5.86 5.18.82.35 1.46.56 1.96.72.82.26 1.57.23 2.17.14.66-.1 2.09-.85 2.39-1.67.29-.82.29-1.52.2-1.67-.09-.14-.32-.23-.66-.4z"/>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M16.04 2.003c-7.732 0-14.01 6.278-14.01 14.01 0 2.47.643 4.88 1.87 7.004l-1.95 7.13 7.3-1.91c2.06 1.12 4.38 1.71 6.79 1.71h.01c7.73 0 14.01-6.28 14.01-14.01s-6.28-14.01-14.01-14.01z"/></svg>
       </a>
     </div>
   </div>
 </div>
 
 <script>
-const search = document.getElementById('search');
-const results = document.getElementById('results');
-const overlay = document.getElementById('overlay');
-const cardName = document.getElementById('cardName');
-const cardSummary = document.getElementById('cardSummary');
-const cardImg = document.getElementById('cardImg');
-const cardSize = document.getElementById('cardSize');
-const cardDate = document.getElementById('cardDate');
-const downloadLink = document.getElementById('downloadLink');
-const whatsappShare = document.getElementById('whatsappShare');
-const closeCard = document.getElementById('closeCard');
-const clearBtn = document.getElementById('clearBtn');
-const bigThumb = document.getElementById('bigThumb');
+const search=document.getElementById('search');
+const results=document.getElementById('results');
+const overlay=document.getElementById('overlay');
+const cardName=document.getElementById('cardName');
+const cardSummary=document.getElementById('cardSummary');
+const cardImg=document.getElementById('cardImg');
+const cardVersion=document.getElementById('cardVersion');
+const cardDate=document.getElementById('cardDate');
+const downloadLink=document.getElementById('downloadLink');
+const whatsappShare=document.getElementById('whatsappShare');
+const closeCard=document.getElementById('closeCard');
+const clearBtn=document.getElementById('clearBtn');
+const bigThumb=document.getElementById('bigThumb');
 
-let receivers = [];
-let currentReceiver = null;
+let receivers=[];
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmuOkSY7cZKXccabamqgcYMY2wy91yAMc3rJSQNKidABGW7vgLR9-cLILlBdF-HeiYYrA9ka_HRXAj/pub?output=csv";
 
-// 🔗 رابط Google Sheets المنشور كـ CSV
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF/pub?output=csv';
-
-// تحميل البيانات من Google Sheets
 async function loadCSV(url){
-  try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('فشل جلب البيانات');
-    const text = await res.text();
-    const rows = text.replace(/^\uFEFF/,'').trim().split(/\r?\n/).map(r=>r.split(','));
-    const headers = rows.shift().map(h=>h.trim());
-    return rows.map(r=>{
-      const obj = {};
-      headers.forEach((h,i)=> obj[h]=r[i]?.trim()||'');
-      return obj;
-    });
-  }catch(e){console.error(e); return [];}
+  const res=await fetch(url);
+  const text=await res.text();
+  const rows=text.trim().split("\n").slice(1);
+  return rows.map(r=>{
+    const [url,image]=r.split(",");
+    return {url:url.trim(),image:image?.trim()};
+  });
 }
 
-async function loadAll(){
-  receivers = await loadCSV(sheetURL);
-  results.innerHTML = ''; // لا يظهر شيء عند التحميل
+function parseURLData(url){
+  const match=url.match(/table\/([^\/]+)\/download/i);
+  if(!match)return null;
+  const raw=match[1];
+  let name=raw.split("-v")[0].toUpperCase();
+  let versionMatch=raw.match(/v(\d+(?:[-_.]\d+)?)/i);
+  let version=versionMatch?"v"+versionMatch[1].replace(/[-_]/,"."):"-";
+  let dateMatch=raw.match(/(\d{8})/);
+  let date="-";
+  let isNew=false;
+  if(dateMatch){
+    const d=dateMatch[1];
+    date=`${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4)}`;
+    const updateDate=new Date(`${d.slice(4)}/${d.slice(2,4)}/${d.slice(0,2)}`);
+    const today=new Date();
+    const diff=(today-updateDate)/(1000*60*60*24);
+    if(diff>=0 && diff<=15)isNew=true;
+  }
+  return {name,version,date,isNew};
 }
 
 function renderResults(list){
-  results.innerHTML = '';
-  if (search.value.trim() === '') {
-    // لا تعرض أي شيء قبل الكتابة
+  results.innerHTML='';
+  if(search.value.trim()==='')return;
+  if(list.length===0){
+    results.innerHTML='<div style="color:var(--muted);text-align:center;padding:10px">لا توجد نتائج</div>';
     return;
   }
-
-  if(list.length === 0){
-    results.innerHTML = '<div style="color:var(--muted);padding:12px;text-align:center">لا توجد نتائج</div>';
-    return;
-  }
-
-  const counter = document.createElement('div');
-  counter.style.textAlign = 'center';
-  counter.style.margin = '6px 0';
-  counter.style.color = 'var(--muted)';
-  counter.textContent = `عدد النتائج: ${list.length}`;
-  results.appendChild(counter);
-
-  list.forEach(r => {
-    const item = document.createElement('div');
-    item.className = 'result-item';
-
-    let shortName = r.name.replace(/[-_]\d{6,8}[-_](zip|bin|rar|tar).*$/i, '');
-    shortName = shortName.replace(/[-_](zip|bin|rar)$/i, '');
-
-    item.innerHTML = `
-      <div class="thumb"><img src="${r.image}" alt="${r.name}"></div>
+  list.forEach(r=>{
+    const data=parseURLData(r.url);
+    if(!data)return;
+    const item=document.createElement('div');
+    item.className='result-item';
+    item.innerHTML=`
+      ${data.isNew?'<div class="new-badge">جديد</div>':''}
+      <div class="thumb"><img src="${r.image}" alt=""></div>
       <div class="meta">
-        <div class="name">${shortName}</div>
-        <div class="small">آخر تحديث: ${r.latest_date || r.date || '-'}</div>
+        <div class="name">${data.name}</div>
+        <div class="small">رقم الإصدار: ${data.version} &nbsp;&nbsp; تاريخ التحديث: ${data.date}</div>
       </div>
     `;
-    item.addEventListener('click', () => showCard(r));
+    item.onclick=()=>showCard(r,data);
     results.appendChild(item);
   });
 }
 
-function showCard(r){
-  currentReceiver = r;
-  cardName.textContent = r.name;
-  cardSummary.textContent = `الحجم: ${r.size}`;
-  cardImg.src = r.image;
-  cardSize.textContent = r.size;
-  cardDate.textContent = r.date;
-  const downloadURL = `https://swdw.net/index.php/table/${encodeURIComponent(r.name)}/download`;
-  downloadLink.href = downloadURL;
-  whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(`📺 ${r.name}\n🔗 تحميل التحديث:\n${downloadURL}`)}`;
+function showCard(r,data){
+  cardName.innerHTML=`${data.isNew?'<span class="new-badge">جديد</span> ':''}${data.name}`;
+
+  cardImg.src=r.image;
+  cardVersion.textContent=data.version;
+  cardDate.textContent=data.date;
+  downloadLink.href=r.url;
+  whatsappShare.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${data.name}\n🔢 الإصدار: ${data.version}\n📅 التاريخ: ${data.date}\n🔗 ${r.url}`)}`;
   overlay.classList.add('show');
 }
 
-closeCard.onclick = () => overlay.classList.remove('show');
-overlay.onclick = e => { if(e.target===overlay) overlay.classList.remove('show'); };
-bigThumb.onclick = () => bigThumb.classList.toggle('fullscreen');
-clearBtn.onclick = () => { search.value=''; results.innerHTML=''; search.focus(); };
+closeCard.onclick=()=>overlay.classList.remove('show');
+overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('show');};
+bigThumb.onclick=()=>bigThumb.classList.toggle('fullscreen');
+clearBtn.onclick=()=>{search.value='';results.innerHTML='';search.focus();};
 
-search.addEventListener('input', () => {
-  const q = search.value.trim().toLowerCase();
-  if(!q){ results.innerHTML=''; return; }
-  const filtered = receivers.filter(r => (r.name||'').toLowerCase().includes(q));
+search.addEventListener('input',()=>{
+  const q=search.value.trim().toLowerCase();
+  if(!q){results.innerHTML='';return;}
+  const filtered=receivers.filter(r=>{
+    const d=parseURLData(r.url);
+    return d&&d.name.toLowerCase().includes(q);
+  });
   renderResults(filtered);
 });
 
-loadAll();
+(async()=>{receivers=await loadCSV(sheetURL);})();
 </script>
 </body>
 </html>
