@@ -3,204 +3,136 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>بحث عن معلومات الرسيفر</title>
-  <meta name="description" content="حمل اخر تحديث لجهازك مع يمن ستلايت">
+<title>🔍 بحث عن الرسيفرات</title>
 
-  <!-- Open Graph tags -->
-  <meta property="og:title" content="تحديث اجهزة الرسيفرات" />
-  <meta property="og:description" content="حمل اخر تحديث لجهازك مع يمن ستلايت." />
-  <meta property="og:image" content="https://raw.githubusercontent.com/falahsab/yoyosat/refs/heads/main/img/update-ys.png" />
-  <meta property="og:url" content="حمل اخر تحديث لجهازك مع يمن ستلايت" />
-  <meta property="og:type" content="website" />
-
-
-  
 <style>
 :root {
-  --bg: #0f1724; --card: #0b1220; --accent: #06b6d4;
-  --muted: #94a3b8; --glass: rgba(255,255,255,0.04);
+  --bg:#0f1724;--card:#0b1220;--txt:white;--accent:#01c38d;--glass:rgba(255,255,255,0.04)
 }
-* {box-sizing:border-box;font-family:"Segoe UI","Noto Kufi Arabic",sans-serif;}
 body {
-  margin:0; background:linear-gradient(180deg,#071021,#071a2a);
-  color:#e6eef6; padding:28px; min-height:100vh;
+  background:var(--bg);
+  font-family:"Tajawal",sans-serif;
+  margin:0;padding:20px;color:var(--txt)
 }
-.container {max-width:980px;margin:auto;}
-header{text-align:center;margin-bottom:18px;}
-h1{font-size:22px;margin:0;}
-.search-box{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px rgba(0,0,0,0.35);}
-.inputs{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-input[type=text]{flex:1;min-width:200px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:inherit;font-size:15px;}
-button{background:var(--accent);color:#012;padding:11px 16px;border-radius:10px;border:none;cursor:pointer;transition:0.3s;}
-button:hover{opacity:0.9;}
-.hint{color:var(--muted);font-size:13px;margin-top:8px;text-align:center;}
-.results{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
-.result-item{background:var(--glass);backdrop-filter:blur(8px);padding:14px;border-radius:14px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s,border .3s;box-shadow:0 0 10px rgba(6,182,212,0.1);}
-.result-item:hover{transform:translateY(-3px);border:1px solid rgba(6,182,212,0.3);}
-.thumb{width:100%;height:150px;border-radius:10px;overflow:hidden;background:#123;margin-bottom:10px;}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.meta{text-align:center;}
-.meta .name{font-weight:600;font-size:16px;margin-bottom:4px;}
-.meta .small{font-size:13px;color:var(--muted);}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px;}
-.overlay.show{display:flex;}
-.card{position:relative;background:var(--card);border-radius:16px;max-width:600px;width:100%;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:fadeIn .4s ease;}
-@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-.close-btn{position:absolute;top:10px;left:14px;background:none;border:none;color:#fff;font-size:24px;font-weight:bold;cursor:pointer;transition:.3s;line-height:1;}
-.close-btn:hover{color:var(--accent);transform:scale(1.2);}
-.card-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:30px;}
-.big-thumb{width:200px;height:130px;border-radius:12px;overflow:hidden;flex-shrink:0;cursor:pointer;transition:transform .3s;}
-.big-thumb img{width:100%;height:100%;object-fit:cover;}
-.big-thumb.fullscreen{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.5);z-index:2000;width:auto;height:auto;max-width:90%;max-height:90%;border-radius:14px;}
-.info{flex:1;}
-.info h2{margin:0 0 6px 0;font-size:20px;}
-.info p{margin:0;color:var(--muted);}
-.details{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px;}
-.detail{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;text-align:center;}
-.detail b{display:block;margin-bottom:6px;color:var(--accent);}
-.actions{margin-top:14px;text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px 16px;border-radius:10px;color:#fff;cursor:pointer;transition:.3s;text-decoration:none;display:flex;align-items:center;}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-.actions svg{width:20px;height:20px;margin-left:6px;fill:#25D366;transition:0.3s;}
-.actions svg:hover{transform:scale(1.2);}
-footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center;}
+.container{max-width:600px;margin:auto}
+.search-box {
+  background:var(--glass);
+  border:1px solid #1e293b;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:20px;
+  display:flex;
+  gap:10px
+}
+input {
+  flex:1;
+  background:none;
+  border:none;
+  color:var(--txt);
+  padding:10px;
+  outline:none;
+}
+.card {
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  margin:10px 0;
+  border:1px solid #1f2a3a;
+  transition:0.25s
+}
+.card:hover { border-color:var(--accent) }
+a { color:var(--accent); text-decoration:none }
+.version { color:#8ef; font-size:14px }
 </style>
 </head>
+
 <body>
 <div class="container">
-  <header><h1>🔍 بحث عن معلومات الرسيفر</h1></header>
-  <section class="search-box">
-    <div class="inputs">
-      <input id="search" type="text" placeholder="اكتب اسم الرسيفر..." autocomplete="off">
-      <button id="clearBtn">مسح</button>
-    </div>
-    <div class="hint">يتم البحث في جميع الأنواع تلقائياً.</div>
-    <div id="results" class="results"></div>
-  </section>
-  <footer>يتم جلب البيانات تلقائيًا من ملفات CSV.</footer>
-</div>
+  <h2>🔍 بحث عن الرسيفرات</h2>
 
-<div id="overlay" class="overlay">
-  <div class="card">
-    <button id="closeCard" class="close-btn">✖</button>
-    <div class="card-head">
-      <div class="big-thumb" id="bigThumb"><img id="cardImg" src="" alt=""></div>
-      <div class="info">
-        <h2 id="cardName">-</h2>
-        <p id="cardSummary">ملخص</p>
-      </div>
-    </div>
-    <div class="details">
-      <div class="detail"><b>يدعم شيرنج</b><div id="cardShare">-</div></div>
-      <div class="detail"><b>نوع السيرفر</b><div id="cardServer">-</div></div>
-      <div class="detail"><b>آخر إصدار</b><div id="cardVersion">-</div></div>
-      <div class="detail"><b>تاريخ التحديث</b><div id="cardDate">-</div></div>
-    </div>
-    <div class="actions">
-      <a id="downloadLink" class="btn-ghost" target="_blank">تحميل التحديث</a>
-      <a id="whatsappShare" class="btn-ghost" target="_blank">
-        واتساب
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-          <path d="M16.04 2.003c-7.732 0-14.01 6.278-14.01 14.01 0 2.47.643 4.88 1.87 7.004l-1.95 7.13 7.3-1.91c2.06 1.12 4.38 1.71 6.79 1.71h.01c7.73 0 14.01-6.28 14.01-14.01s-6.28-14.01-14.01-14.01zm0 25.5h-.01c-2.19 0-4.33-.56-6.2-1.61l-.44-.25-4.33 1.14 1.16-4.23-.28-.44c-1.15-1.82-1.76-3.93-1.76-6.1 0-6.35 5.17-11.52 11.52-11.52 3.08 0 5.98 1.2 8.16 3.38 2.18 2.18 3.38 5.08 3.38 8.16 0 6.35-5.17 11.52-11.52 11.52zm6.35-8.64c-.35-.18-2.09-1.03-2.41-1.15-.32-.12-.55-.18-.78.18-.23.35-.89 1.15-1.1 1.39-.2.23-.4.26-.75.09-.35-.18-1.47-.54-2.8-1.72-1.03-.92-1.72-2.06-1.92-2.41-.2-.35-.02-.54.15-.71.15-.15.35-.4.52-.6.18-.2.23-.35.35-.58.12-.23.06-.43-.03-.61-.09-.18-.78-1.87-1.07-2.56-.28-.68-.57-.59-.78-.6l-.66-.01c-.23 0-.6.09-.91.43-.32.35-1.2 1.17-1.2 2.85s1.23 3.3 1.4 3.53c.18.23 2.42 3.69 5.86 5.18.82.35 1.46.56 1.96.72.82.26 1.57.23 2.17.14.66-.1 2.09-.85 2.39-1.67.29-.82.29-1.52.2-1.67-.09-.14-.32-.23-.66-.4z"/>
-        </svg>
-      </a>
-    </div>
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
   </div>
+
+  <div id="results"></div>
 </div>
 
 <script>
-const search = document.getElementById('search');
-const results = document.getElementById('results');
-const overlay = document.getElementById('overlay');
-const cardName = document.getElementById('cardName');
-const cardSummary = document.getElementById('cardSummary');
-const cardImg = document.getElementById('cardImg');
-const cardShare = document.getElementById('cardShare');
-const cardServer = document.getElementById('cardServer');
-const cardVersion = document.getElementById('cardVersion');
-const cardDate = document.getElementById('cardDate');
-const downloadLink = document.getElementById('downloadLink');
-const whatsappShare = document.getElementById('whatsappShare');
-const closeCard = document.getElementById('closeCard');
-const clearBtn = document.getElementById('clearBtn');
-const bigThumb = document.getElementById('bigThumb');
+// **معلومات الشيت**
+const SHEET_ID = "YOUR_SHEET_ID_HERE";
+const SHEET_NAME = "Sheet1";
+const API_KEY = "YOUR_GOOGLE_API_KEY";
 
-let receivers = [];
-let currentReceiver = null;
+// رابط جلب البيانات
+const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-// جلب ملف CSV
-async function loadCSV(url){
-  const res = await fetch(url);
-  const text = await res.text();
-  const rows = text.trim().split(/\r?\n/).map(r=>r.split(','));
-  const headers = rows.shift();
-  return rows.map(r=>{
-    const obj = {};
-    headers.forEach((h,i)=> obj[h.trim()] = r[i]?.trim());
-    return obj;
-  });
-}
+let allDevices = [];
 
-// تحميل جميع الأنواع
-async function loadAll(){
-  const types = await loadCSV('csv/types.csv');
-  for(const t of types){
-    if(t.file){
-      const list = await loadCSV('csv/'+t.file);
-      receivers.push(...list.map(r=>({...r,type:t.type})));
-    }
+// دالة استخراج الإصدار والتاريخ من الرابط
+function parseURLData(url) {
+  if (!url) return { version: "-", releaseDate: "-" };
+
+  let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
+  let version = versionMatch ? "V" + versionMatch[1] : "-";
+
+  let dateMatch = url.match(/(\d{8})/);
+  let releaseDate = "-";
+  if (dateMatch) {
+    let d = dateMatch[1];
+    releaseDate = `${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4,8)}`;
   }
+
+  return { version, releaseDate };
 }
 
-function renderResults(list){
-  results.innerHTML = '';
-  if(list.length===0){
-    results.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:12px;text-align:center">لا توجد نتائج مطابقة</div>';
-    return;
-  }
-  list.forEach(r=>{
-    const item = document.createElement('div');
-    item.className = 'result-item';
-    item.innerHTML = `
-      <div class="thumb"><img src="${r.image||''}" alt="${r.name}"></div>
-      <div class="meta">
-        <div class="name">${r.name}</div>
-        <div class="small">${r.server_type||''} • ${r.latest_version||''}</div>
-      </div>`;
-    item.addEventListener('click', ()=> showCard(r));
-    results.appendChild(item);
+// جلب البيانات من Google Sheets
+fetch(DATA_URL)
+  .then(r => r.json())
+  .then(data => {
+    let rows = data.values;
+    let headers = rows[0];
+    rows.slice(1).forEach(r => {
+      let item = {};
+      headers.forEach((h,i)=> item[h]=r[i]);
+      const extra = parseURLData(item.url);
+      item.version = extra.version;
+      item.date = extra.releaseDate;
+      allDevices.push(item);
+    });
+    showResults(allDevices);
   });
-}
 
-function showCard(r){
-  currentReceiver = r;
-  cardName.textContent = r.name;
-  cardSummary.textContent = `نوع السيرفر: ${r.server_type||'-'}`;
-  cardImg.src = r.image||'';
-  cardShare.textContent = r.supports_sharing || '-';
-  cardServer.textContent = r.server_type||'-';
-  cardVersion.textContent = r.latest_version||'-';
-  cardDate.textContent = r.latest_date||'-';
-  downloadLink.href = r.download||'#';
-  whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(`📺 ${r.name}\n🔗 تحميل التحديث:\n${r.download||''}`)}`;
-
-  overlay.classList.add('show');
-}
-
-closeCard.onclick = ()=> overlay.classList.remove('show');
-overlay.onclick = e=>{ if(e.target===overlay) overlay.classList.remove('show'); };
-bigThumb.onclick = ()=> bigThumb.classList.toggle('fullscreen');
-clearBtn.onclick = ()=>{ search.value=''; results.innerHTML=''; search.focus(); };
-
-search.addEventListener('input', ()=>{
-  const q = search.value.trim().toLowerCase();
-  if(!q){results.innerHTML='';return;}
-  const filtered = receivers.filter(r=> (r.name||'').toLowerCase().includes(q));
-  renderResults(filtered);
+// بحث حي أثناء الكتابة
+document.getElementById("searchInput").addEventListener("input", ()=>{
+  let q = searchInput.value.trim().toLowerCase();
+  let filtered = allDevices.filter(d =>
+    d.name.toLowerCase().includes(q)
+  );
+  showResults(filtered);
 });
 
-loadAll();
+// عرض النتائج
+function showResults(list) {
+  let box = document.getElementById("results");
+  box.innerHTML = "";
+  if (list.length === 0) {
+    box.innerHTML = "<p>لا توجد نتائج</p>";
+    return;
+  }
+
+  list.forEach(item=>{
+    box.innerHTML += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p class="version">الإصدار: ${item.version}</p>
+        <p class="version">تاريخ التحديث: ${item.date}</p>
+        <p>الحجم: ${item.size || "-"}</p>
+        <a href="${item.url}" target="_blank">⬇ تحميل</a>
+      </div>
+    `;
+  });
+}
 </script>
+
 </body>
 </html>
-
