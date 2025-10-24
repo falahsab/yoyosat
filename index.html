@@ -195,7 +195,10 @@ function showPopup(item){
   popupDate.textContent="تاريخ التحديث: "+item.date;
   popupSize.textContent="الحجم: "+item.size;
   popupDownload.href=item.url;
-  popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${item.shortUrl}\nSource: ${window.location.href}`)}`;
+// مشاركة واتساب
+const waText = `📺 ${item.name}\n🔗 ${window.location.origin + window.location.pathname}?search=${encodeURIComponent(item.name)}`;
+popupWhats.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+
   overlay.classList.add("show");
 }
 
@@ -213,6 +216,17 @@ window.addEventListener("popstate", function(event){
   }
 });
 history.pushState(null, null, location.href);
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  const params = new URLSearchParams(window.location.search);
+  const searchQuery = params.get("search");
+  if(searchQuery){
+    searchInput.value = searchQuery;
+    const event = new Event('input');
+    searchInput.dispatchEvent(event); // يشغّل البحث تلقائيًا
+  }
+});
+
 </script>
 
 </body>
