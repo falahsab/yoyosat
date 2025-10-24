@@ -59,13 +59,22 @@ a { color:var(--accent); text-decoration:none }
 
 <script>
 const SHEET_ID = "1fvlOESmcjdE1DaiivSe8FB_pMp85MWzOajS9OWRzmow";
-const SHEETS = ["Sheet3"]; // عدل أسماء الأوراق التي تريدها
+const SHEETS = ["sheet3"];
 let allDevices = [];
 
-// استخراج الإصدار والتاريخ من الرابط
-function parseURLData(url) {
-  if (!url) return { version: "-", releaseDate: "-" };
+// تحسين تقسيم CSV ليقرأ الحقول مهما كانت الفواصل داخلها
+function parseCSV(csv) {
+  const rows = csv.split(/\r?\n/).map(r => r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+  const headers = rows[0];
+  return rows.slice(1).map(row => {
+    let obj = {};
+    headers.forEach((h,i)=> obj[h.trim()] = row[i] ? row[i].trim().replace(/"/g,"") : "-");
+    return obj;
+  });
+}
 
+// استخراج الإصدار والتاريخ من رابط التحديث
+function parseURLData(url = "") {
   let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
   let version = versionMatch ? "V" + versionMatch[1] : "-";
 
@@ -75,38 +84,33 @@ function parseURLData(url) {
     let d = dateMatch[1];
     releaseDate = `${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4,8)}`;
   }
-
   return { version, releaseDate };
 }
 
-// قراءة CSV وتحويله لمصفوفة JSON
-function csvToArray(str) {
-  let rows = str.split("\n").map(r => r.split(","));
-  let headers = rows[0];
-  return rows.slice(1).map(row => {
-    let item = {};
-    headers.forEach((h,i)=> item[h]=row[i]);
-    const extra = parseURLData(item.url);
-    item.version = extra.version;
-    item.date = extra.releaseDate;
-    return item;
-  });
-}
-
-// جلب البيانات من كل ورقة
+// جلب أوراق الشيت بصيغة CSV
 async function fetchSheets() {
   for (let sheet of SHEETS) {
     let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheet}`;
     let res = await fetch(url);
     let csv = await res.text();
-    allDevices.push(...csvToArray(csv));
+    let data = parseCSV(csv);
+
+    data.forEach(item=>{
+      const extra = parseURLData(item.url || "");
+      item.version = extra.version;
+      item.date = extra.releaseDate;
+      item.name = item.name || "-";
+      item.size = item.size || "-";
+      item.image = item.image || "";
+      allDevices.push(item);
+    });
   }
   showResults(allDevices);
 }
 
 fetchSheets();
 
-// بحث حي
+// بحث تلقائي
 document.getElementById("searchInput").addEventListener("input", ()=>{
   let q = searchInput.value.trim().toLowerCase();
   let filtered = allDevices.filter(d =>
@@ -115,11 +119,11 @@ document.getElementById("searchInput").addEventListener("input", ()=>{
   showResults(filtered);
 });
 
-// عرض النتائج
+// عرض النتائج في الصفحة
 function showResults(list) {
   let box = document.getElementById("results");
   box.innerHTML = "";
-  if (list.length === 0) {
+  if (!list.length) {
     box.innerHTML = "<p>لا توجد نتائج</p>";
     return;
   }
@@ -130,15 +134,17 @@ function showResults(list) {
         <h3>${item.name}</h3>
         <p class="version">الإصدار: ${item.version}</p>
         <p class="version">تاريخ التحديث: ${item.date}</p>
-        <p>الحجم: ${item.size || "-"}</p>
+        <p>الحجم: ${item.size}</p>
         <a href="${item.url}" target="_blank">⬇ تحميل</a>
       </div>
     `;
   });
 }
 </script>
+
 </body>
 </html>
+
 
 
 
