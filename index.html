@@ -6,18 +6,14 @@
 <title>🔍 بحث عن الرسيفرات</title>
 <style>
 :root {
-  --bg:#0f1724;--card:#0b1220;--txt:white;--accent:#01c38d;--glass:rgba(255,255,255,0.04);
+  --bg:#0f1724; --card:#0b1220; --txt:white; --accent:#01c38d; --glass:rgba(255,255,255,0.04);
 }
-body {
-  background:var(--bg);
-  font-family:"Tajawal",sans-serif;
-  margin:0;padding:20px;color:var(--txt)
-}
-.container{max-width:600px;margin:auto}
-.search-box {background:var(--glass);border:1px solid #1e293b;padding:12px;border-radius:10px;margin-bottom:20px;display:flex;gap:10px}
+body { background:var(--bg); font-family:"Tajawal",sans-serif; margin:0;padding:20px;color:var(--txt);}
+.container{max-width:600px;margin:auto;}
+.search-box {background:var(--glass);border:1px solid #1e293b;padding:12px;border-radius:10px;margin-bottom:20px;display:flex;gap:10px;}
 input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:none;}
 .card {background:var(--card);padding:15px;border-radius:12px;margin:10px 0;border:1px solid #1f2a3a;transition:0.25s;display:flex;gap:10px;align-items:center;}
-.card:hover {border-color:var(--accent)}
+.card:hover {border-color:var(--accent);}
 .card img {width:80px;height:50px;object-fit:cover;border-radius:6px;}
 a {color:var(--accent);text-decoration:none;}
 .version {color:#8ef;font-size:14px;}
@@ -34,12 +30,23 @@ a {color:var(--accent);text-decoration:none;}
 </div>
 
 <script>
-// إعداد أوراق CSV
-const SHEET_ID = "1fvlOESmcjdE1DaiivSe8FB_pMp85MWzOajS9OWRzmow";
-const SHEETS = ["sheet3"];
+// معرف الشيت
+const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
+
+// تعريف كل الشيتات بالـ gid
+const SHEETS = [
+  { name: "Sheet1", gid: "1337227866" },
+ // مثال
+];
+
 let allDevices = [];
 
-// استخراج الإصدار والتاريخ من الرابط
+// إنشاء رابط CSV لكل شيت
+function getCSVUrl(sheet) {
+  return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`;
+}
+
+// استخراج الإصدار والتاريخ من رابط التحميل
 function parseURLData(url = "") {
   let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
   let version = versionMatch ? "V" + versionMatch[1] : "-";
@@ -58,13 +65,15 @@ function parseURLData(url = "") {
   return { version, releaseDate, isNew };
 }
 
-// تحويل CSV إلى مصفوفة JSON
+// تحويل CSV إلى JSON
 function parseCSV(csv) {
   const rows = csv.split(/\r?\n/).map(r=>r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
   const headers = rows[0];
   return rows.slice(1).map(row=>{
     let item = {};
-    headers.forEach((h,i)=> item[h.trim()] = row[i]?row[i].trim().replace(/"/g,""):"-");
+    headers.forEach((header, index) => {
+      item[header.trim()] = row[index] ? row[index].trim().replace(/"/g,"") : "-";
+    });
     const extra = parseURLData(item.url);
     item.version = extra.version;
     item.date = extra.releaseDate;
@@ -76,19 +85,23 @@ function parseCSV(csv) {
   });
 }
 
-// جلب البيانات من كل ورقة
+// جلب البيانات من كل الشيتات
 async function fetchSheets() {
   for (let sheet of SHEETS) {
-    let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheet}`;
-    let res = await fetch(url);
-    let csv = await res.text();
-    allDevices.push(...parseCSV(csv));
+    const url = getCSVUrl(sheet);
+    try {
+      const res = await fetch(url);
+      const csv = await res.text();
+      allDevices.push(...parseCSV(csv));
+    } catch(err) {
+      console.error("فشل جلب البيانات من:", sheet.name, err);
+    }
   }
   showResults(allDevices);
 }
 fetchSheets();
 
-// بحث حي
+// البحث الحي
 document.getElementById("searchInput").addEventListener("input", ()=>{
   let q = searchInput.value.trim().toLowerCase();
   let filtered = allDevices.filter(d => (d.name || "").toLowerCase().includes(q));
@@ -118,4 +131,3 @@ function showResults(list) {
 </script>
 </body>
 </html>
-
