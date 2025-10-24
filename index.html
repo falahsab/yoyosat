@@ -23,9 +23,17 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 .new-badge {background:#01c38d;color:#012;padding:2px 6px;border-radius:6px;font-size:11px;font-weight:bold;margin-left:6px;}
 
 /* البطاقة المنبثقة */
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px;}
-.overlay.show{display:flex;}
-.card-popup{position:relative;background:var(--card);border-radius:16px;width:90%;max-width:400px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.overlay{
+  position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7);
+  display:none; z-index:1000;
+}
+.overlay.show { display:block; }
+
+.card-popup{
+  position: fixed; top:50%; left:50%; transform: translate(-50%,-50%);
+  background: var(--card); border-radius:16px; width:90%; max-width:400px; padding:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:1001;
+}
 .close-btn{position:absolute;top:10px;left:14px;background:none;border:none;color:#fff;font-size:24px;font-weight:bold;cursor:pointer;line-height:1;}
 .close-btn:hover{color:var(--accent);}
 .popup-img{width:100%;height:auto;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:12px;}
@@ -81,6 +89,7 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
 const SHEETS = [
   { name: "Sheet1", gid: "1337227866" },
+// مثال
 ];
 let allDevices = [];
 
@@ -182,8 +191,13 @@ function showPopup(item){
   popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.href}`)}`;
   overlay.classList.add("show");
 }
+
+// إغلاق البطاقة بالنقر على زر الإغلاق أو أي مكان خارج البطاقة
 closePopup.onclick = ()=>overlay.classList.remove("show");
 overlay.onclick = e=>{if(e.target===overlay) overlay.classList.remove("show");}
+
+// إغلاق البطاقة عند الضغط على زر العودة في الجوال
+window.addEventListener("popstate", ()=>{ overlay.classList.remove("show"); });
 </script>
 
 </body>
