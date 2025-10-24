@@ -60,9 +60,17 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 
 <div class="container">
   <h2>🔍 بحث عن الرسيفرات</h2>
-  <div class="search-box">
-    <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
-  </div>
+<div class="search-box">
+  <button id="clearSearch" style="
+    background:none;
+    border:none;
+    color:var(--txt);
+    font-size:18px;
+    cursor:pointer;
+  ">✖</button>
+  <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
+</div>
+
   <div id="results" class="results"></div>
 </div>
 
@@ -234,6 +242,9 @@ function closePopupFunc(){
     history.replaceState(null, "");
   }
 }
+document.getElementById("clearSearch").addEventListener("click", () => {
+  window.location.href = "/"; // رابط الصفحة الرئيسية
+});
 
 
 </script>
