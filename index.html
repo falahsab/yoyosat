@@ -12,6 +12,7 @@ body { background:var(--bg); font-family:"Tajawal",sans-serif; margin:0; padding
 .container{max-width:800px;margin:auto;}
 .search-box {background:var(--glass);border:1px solid #1e293b;padding:12px;border-radius:10px;margin-bottom:20px;display:flex;gap:10px;}
 input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:none;}
+
 .results {display:flex;flex-direction:column;gap:10px;}
 .card {background:var(--card);padding:8px 12px;border-radius:10px;display:flex;gap:10px;align-items:center;border:1px solid #1f2a3a;cursor:pointer;transition:0.25s;}
 .card:hover {border-color:var(--accent);}
@@ -59,7 +60,7 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 
 <!-- البطاقة المنبثقة -->
 <div id="overlay" class="overlay">
-  <div class="card-popup" id="cardPopup">
+  <div class="card-popup">
     <button id="closePopup" class="close-btn">✖</button>
     <img id="popupImg" class="popup-img" src="" alt="">
     <div class="popup-info">
@@ -76,37 +77,38 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 </div>
 
 <script>
-// --- إعداد الشيتات ---
 const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
 const SHEETS = [
   { name: "Sheet1", gid: "1337227866" },
-
 ];
-
 let allDevices = [];
 
-// رابط CSV لكل شيت
-function getCSVUrl(sheet){ 
-  return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; 
-}
+const searchInput = document.getElementById("searchInput");
+const overlay = document.getElementById("overlay");
+const popupImg = document.getElementById("popupImg");
+const popupName = document.getElementById("popupName");
+const popupVersion = document.getElementById("popupVersion");
+const popupDate = document.getElementById("popupDate");
+const popupSize = document.getElementById("popupSize");
+const popupDownload = document.getElementById("popupDownload");
+const popupWhats = document.getElementById("popupWhats");
+const closePopup = document.getElementById("closePopup");
 
-// --- استخراج الإصدار والتاريخ مع وسم الجديد ---
+function getCSVUrl(sheet){ return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; }
+
 function parseURLData(url=""){
   let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
   let version = versionMatch ? "V"+versionMatch[1] : "-";
-
   let dateMatch = url.match(/(\d{8})/);
-  let releaseDate="-"; 
-  let isNew=false;
+  let releaseDate="-"; let isNew=false;
   if(dateMatch){
     let d = dateMatch[1];
     let updateDate = new Date(`${d.slice(4,8)}-${d.slice(2,4)}-${d.slice(0,2)}`);
-    updateDate.setDate(updateDate.getDate()+1); // زيادة يوم
+    updateDate.setDate(updateDate.getDate()+1);
     const day = String(updateDate.getDate()).padStart(2,'0');
     const month = String(updateDate.getMonth()+1).padStart(2,'0');
     const year = updateDate.getFullYear();
     releaseDate = `${day}/${month}/${year}`;
-
     const today = new Date();
     const diffDays = (today - updateDate)/(1000*60*60*24);
     if(diffDays <= 15 && diffDays >=0) isNew=true;
@@ -114,7 +116,6 @@ function parseURLData(url=""){
   return {version, releaseDate, isNew};
 }
 
-// --- تحويل CSV إلى JSON ---
 function parseCSV(csv){
   const rows = csv.split(/\r?\n/).map(r=>r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
   const headers = rows[0];
@@ -122,17 +123,12 @@ function parseCSV(csv){
     let item={};
     headers.forEach((h,i)=>{ item[h.trim()] = row[i]?row[i].trim().replace(/"/g,""):"-"; });
     const extra = parseURLData(item.url);
-    item.version=extra.version; 
-    item.date=extra.releaseDate; 
-    item.isNew=extra.isNew;
-    item.name = item.name || "-"; 
-    item.size=item.size||"-"; 
-    item.image=item.image||"";
+    item.version=extra.version; item.date=extra.releaseDate; item.isNew=extra.isNew;
+    item.name = item.name || "-"; item.size=item.size||"-"; item.image=item.image||"";
     return item;
   });
 }
 
-// --- جلب كل الشيتات ---
 async function fetchSheets(){
   for(let sheet of SHEETS){
     try{
@@ -142,38 +138,31 @@ async function fetchSheets(){
     }catch(err){ console.error("فشل جلب:",sheet.name,err); }
   }
 
-  // --- التحقق من باراميتر البحث ---
+  // التحقق من باراميتر البحث
   const params = new URLSearchParams(window.location.search);
   const searchQuery = params.get("search");
-  if(searchQuery){
-    searchInput.value = searchQuery;
-  }
+  if(searchQuery) searchInput.value = searchQuery;
 
-  // تشغيل البحث تلقائيًا بعد تحميل البيانات
-  const event = new Event('input');
-  searchInput.dispatchEvent(event);
+  // تشغيل البحث تلقائيًا
+  searchInput.dispatchEvent(new Event('input'));
 
-  // عرض جميع النتائج أوليًا
-  showResults(allDevices);
+  // عرض كل النتائج إذا البحث فارغ
+  if(!searchInput.value) showResults(allDevices);
 }
 
-// --- البحث الحي ---
-const searchInput = document.getElementById("searchInput");
+fetchSheets();
+
 searchInput.addEventListener("input",()=>{
   let q = searchInput.value.trim().toLowerCase();
   let filtered = allDevices.filter(d=> (d.name||"").toLowerCase().includes(q));
   showResults(filtered);
 });
 
-// --- عرض النتائج ---
 function showResults(list){
-  let box = document.getElementById("results");
+  const box = document.getElementById("results");
   box.innerHTML="";
   if(!list.length){ box.innerHTML="<p>لا توجد نتائج</p>"; return; }
-
-  // فرز الجديد أولًا
   list.sort((a,b)=> a.isNew && !b.isNew?-1: !a.isNew && b.isNew?1:0);
-
   list.forEach(item=>{
     box.innerHTML+=`
       <div class="card" onclick='showPopup(${JSON.stringify(item).replace(/'/g,"\\'")})'>
@@ -187,17 +176,6 @@ function showResults(list){
   });
 }
 
-// --- البطاقة المنبثقة ---
-const overlay = document.getElementById("overlay");
-const popupImg = document.getElementById("popupImg");
-const popupName = document.getElementById("popupName");
-const popupVersion = document.getElementById("popupVersion");
-const popupDate = document.getElementById("popupDate");
-const popupSize = document.getElementById("popupSize");
-const popupDownload = document.getElementById("popupDownload");
-const popupWhats = document.getElementById("popupWhats");
-const closePopup = document.getElementById("closePopup");
-
 function showPopup(item){
   popupImg.src=item.image || "";
   popupName.textContent=item.name;
@@ -205,36 +183,25 @@ function showPopup(item){
   popupDate.textContent="تاريخ التحديث: "+item.date;
   popupSize.textContent="الحجم: "+item.size;
   popupDownload.href=item.url;
-  popupDownload.target="_blank";
-
-  // مشاركة واتساب مع رابط الموقع ووضع اسم الرسيفر في البحث
-  const waText = `📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.origin + window.location.pathname}?search=${encodeURIComponent(item.name)}`;
-  popupWhats.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
-
+  popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.href}`)}`;
   overlay.classList.add("show");
 }
 
-// --- إغلاق البطاقة ---
-function closePopupFunc(){ overlay.classList.remove("show"); }
-closePopup.onclick = closePopupFunc;
+// إغلاق البطاقة
+closePopup.onclick = ()=> overlay.classList.remove("show");
+overlay.onclick = e=>{ if(e.target===overlay) overlay.classList.remove("show"); }
 
-// إغلاق عند النقر على البطاقة نفسها
-overlay.onclick = e=>{ 
-  if(e.target===overlay) closePopupFunc(); 
-}
-
-// --- إغلاق عند زر العودة في الجوال ---
-window.addEventListener("popstate", ()=>{
+// زر العودة في الجوال
+window.addEventListener('popstate', ()=>{
   if(overlay.classList.contains("show")){
-    closePopupFunc();
-    history.pushState(null,null,window.location.href); // منع الرجوع للصفحة السابقة
+    overlay.classList.remove("show");
+    history.pushState(null,null,window.location.href);
   }
 });
 
-// إضافة حالة جديدة لتاريخ البطاقة
-fetchSheets();
+// عند فتح الصفحة، نضيف state حتى يعمل زر العودة
+history.pushState(null,null,window.location.href);
 </script>
 
 </body>
 </html>
-
