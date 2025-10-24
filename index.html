@@ -182,22 +182,51 @@ const popupWhats = document.getElementById("popupWhats");
 const closePopup = document.getElementById("closePopup");
 
 function showPopup(item){
-  popupImg.src=item.image || "";
-  popupName.textContent=item.name;
-  popupVersion.textContent="الإصدار: "+item.version;
-  popupDate.textContent="تاريخ التحديث: "+item.date;
-  popupSize.textContent="الحجم: "+item.size;
-  popupDownload.href=item.url;
-  popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.href}`)}`;
+  popupImg.src = item.image || "";
+  popupName.textContent = item.name;
+  popupVersion.textContent = "الإصدار: " + item.version;
+  popupDate.textContent = "تاريخ التحديث: " + item.date;
+  popupSize.textContent = "الحجم: " + item.size;
+  popupDownload.href = item.url;
+
+  // تعديل رابط واتساب ليشمل المصدر
+const whatsappText = `
+📡 ${item.name}
+🔢 الإصدار: ${item.version}
+📅 التاريخ: ${item.date}
+المصدر: ${window.location.href}
+⬇ تحميل: ${item.url}
+`;
+
+popupWhats.href = "https://wa.me/?text=" + encodeURIComponent(whatsappText);
+
   overlay.classList.add("show");
+
+  // إضافة سجل جديد للرجوع
+  history.pushState({popup:true}, "");
+}
+// زر الإغلاق
+closePopup.onclick = closePopupFunc;
+
+// النقر خارج البطاقة
+overlay.onclick = e => {
+  if(e.target === overlay) closePopupFunc();
 }
 
-// إغلاق البطاقة بالنقر على زر الإغلاق أو أي مكان خارج البطاقة
-closePopup.onclick = ()=>overlay.classList.remove("show");
-overlay.onclick = e=>{if(e.target===overlay) overlay.classList.remove("show");}
+// زر الرجوع في الجوال
+window.addEventListener("popstate", e => {
+  if(overlay.classList.contains("show")) overlay.classList.remove("show");
+});
 
-// إغلاق البطاقة عند الضغط على زر العودة في الجوال
-window.addEventListener("popstate", ()=>{ overlay.classList.remove("show"); });
+function closePopupFunc(){
+  overlay.classList.remove("show");
+  // إزالة سجل الرجوع إذا كان هذا هو سجل popup
+  if(history.state && history.state.popup){
+    history.replaceState(null, "");
+  }
+}
+
+
 </script>
 
 </body>
