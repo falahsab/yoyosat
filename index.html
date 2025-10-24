@@ -12,7 +12,6 @@ body { background:var(--bg); font-family:"Tajawal",sans-serif; margin:0; padding
 .container{max-width:800px;margin:auto;}
 .search-box {background:var(--glass);border:1px solid #1e293b;padding:12px;border-radius:10px;margin-bottom:20px;display:flex;gap:10px;}
 input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:none;}
-
 .results {display:flex;flex-direction:column;gap:10px;}
 .card {background:var(--card);padding:8px 12px;border-radius:10px;display:flex;gap:10px;align-items:center;border:1px solid #1f2a3a;cursor:pointer;transition:0.25s;}
 .card:hover {border-color:var(--accent);}
@@ -23,17 +22,9 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 .new-badge {background:#01c38d;color:#012;padding:2px 6px;border-radius:6px;font-size:11px;font-weight:bold;margin-left:6px;}
 
 /* البطاقة المنبثقة */
-.overlay{
-  position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7);
-  display:none; z-index:1000;
-}
-.overlay.show { display:block; }
-
-.card-popup{
-  position: fixed; top:50%; left:50%; transform: translate(-50%,-50%);
-  background: var(--card); border-radius:16px; width:90%; max-width:400px; padding:15px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:1001;
-}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px;}
+.overlay.show{display:flex;}
+.card-popup{position:relative;background:var(--card);border-radius:16px;width:90%;max-width:400px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
 .close-btn{position:absolute;top:10px;left:14px;background:none;border:none;color:#fff;font-size:24px;font-weight:bold;cursor:pointer;line-height:1;}
 .close-btn:hover{color:var(--accent);}
 .popup-img{width:100%;height:auto;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:12px;}
@@ -68,7 +59,7 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 
 <!-- البطاقة المنبثقة -->
 <div id="overlay" class="overlay">
-  <div class="card-popup">
+  <div class="card-popup" id="cardPopup">
     <button id="closePopup" class="close-btn">✖</button>
     <img id="popupImg" class="popup-img" src="" alt="">
     <div class="popup-info">
@@ -89,9 +80,23 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
 const SHEETS = [
   { name: "Sheet1", gid: "1337227866" },
-// مثال
+
 ];
 let allDevices = [];
+const shortLinks = {}; // روابط مختصرة
+
+// توليد معرف قصير
+function generateShortId(length = 6){
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let id = "";
+  for(let i=0;i<length;i++) id += chars.charAt(Math.floor(Math.random()*chars.length));
+  return id;
+}
+function getShortUrl(url){
+  const id = generateShortId();
+  shortLinks[id] = url;
+  return `${window.location.origin}/s/${id}`;
+}
 
 // رابط CSV لكل شيت
 function getCSVUrl(sheet){ return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; }
@@ -127,6 +132,7 @@ function parseCSV(csv){
     const extra = parseURLData(item.url);
     item.version=extra.version; item.date=extra.releaseDate; item.isNew=extra.isNew;
     item.name = item.name || "-"; item.size=item.size||"-"; item.image=item.image||"";
+    item.shortUrl = getShortUrl(item.url);
     return item;
   });
 }
@@ -172,6 +178,7 @@ function showResults(list){
 
 // عرض البطاقة المنبثقة
 const overlay = document.getElementById("overlay");
+const cardPopup = document.getElementById("cardPopup");
 const popupImg = document.getElementById("popupImg");
 const popupName = document.getElementById("popupName");
 const popupVersion = document.getElementById("popupVersion");
@@ -182,51 +189,30 @@ const popupWhats = document.getElementById("popupWhats");
 const closePopup = document.getElementById("closePopup");
 
 function showPopup(item){
-  popupImg.src = item.image || "";
-  popupName.textContent = item.name;
-  popupVersion.textContent = "الإصدار: " + item.version;
-  popupDate.textContent = "تاريخ التحديث: " + item.date;
-  popupSize.textContent = "الحجم: " + item.size;
-  popupDownload.href = item.url;
-
-  // تعديل رابط واتساب ليشمل المصدر
-const whatsappText = `
-📡 ${item.name}
-🔢 الإصدار: ${item.version}
-📅 التاريخ: ${item.date}
-المصدر: ${window.location.href}
-⬇ تحميل: ${item.url}
-`;
-
-popupWhats.href = "https://wa.me/?text=" + encodeURIComponent(whatsappText);
-
+  popupImg.src=item.image || "";
+  popupName.textContent=item.name;
+  popupVersion.textContent="الإصدار: "+item.version;
+  popupDate.textContent="تاريخ التحديث: "+item.date;
+  popupSize.textContent="الحجم: "+item.size;
+  popupDownload.href=item.url;
+  popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${item.shortUrl}\nSource: ${window.location.href}`)}`;
   overlay.classList.add("show");
-
-  // إضافة سجل جديد للرجوع
-  history.pushState({popup:true}, "");
 }
-// زر الإغلاق
+
+// إغلاق النافذة
+function closePopupFunc(){ overlay.classList.remove("show"); }
 closePopup.onclick = closePopupFunc;
+cardPopup.onclick = e=> e.stopPropagation(); // منع إغلاق عند النقر داخل البطاقة
+overlay.onclick = closePopupFunc;
 
-// النقر خارج البطاقة
-overlay.onclick = e => {
-  if(e.target === overlay) closePopupFunc();
-}
-
-// زر الرجوع في الجوال
-window.addEventListener("popstate", e => {
-  if(overlay.classList.contains("show")) overlay.classList.remove("show");
-});
-
-function closePopupFunc(){
-  overlay.classList.remove("show");
-  // إزالة سجل الرجوع إذا كان هذا هو سجل popup
-  if(history.state && history.state.popup){
-    history.replaceState(null, "");
+// دعم زر العودة في الجوال
+window.addEventListener("popstate", function(event){
+  if(overlay.classList.contains("show")){
+    closePopupFunc();
+    history.pushState(null, null, location.href); // إعادة حالة لتفادي الخروج
   }
-}
-
-
+});
+history.pushState(null, null, location.href);
 </script>
 
 </body>
