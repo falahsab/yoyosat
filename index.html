@@ -76,45 +76,37 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 </div>
 
 <script>
-// الشيتات
+// --- إعداد الشيتات ---
 const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
 const SHEETS = [
   { name: "Sheet1", gid: "1337227866" },
 
 ];
-let allDevices = [];
-const shortLinks = {}; // روابط مختصرة
 
-// توليد معرف قصير
-function generateShortId(length = 6){
-  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let id = "";
-  for(let i=0;i<length;i++) id += chars.charAt(Math.floor(Math.random()*chars.length));
-  return id;
-}
-function getShortUrl(url){
-  const id = generateShortId();
-  shortLinks[id] = url;
-  return `${window.location.origin}/s/${id}`;
-}
+let allDevices = [];
 
 // رابط CSV لكل شيت
-function getCSVUrl(sheet){ return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; }
+function getCSVUrl(sheet){ 
+  return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; 
+}
 
-// استخراج الإصدار والتاريخ مع زيادة يوم
+// --- استخراج الإصدار والتاريخ مع وسم الجديد ---
 function parseURLData(url=""){
   let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
   let version = versionMatch ? "V"+versionMatch[1] : "-";
+
   let dateMatch = url.match(/(\d{8})/);
-  let releaseDate="-"; let isNew=false;
+  let releaseDate="-"; 
+  let isNew=false;
   if(dateMatch){
     let d = dateMatch[1];
     let updateDate = new Date(`${d.slice(4,8)}-${d.slice(2,4)}-${d.slice(0,2)}`);
-    updateDate.setDate(updateDate.getDate()+1);
+    updateDate.setDate(updateDate.getDate()+1); // زيادة يوم
     const day = String(updateDate.getDate()).padStart(2,'0');
     const month = String(updateDate.getMonth()+1).padStart(2,'0');
     const year = updateDate.getFullYear();
     releaseDate = `${day}/${month}/${year}`;
+
     const today = new Date();
     const diffDays = (today - updateDate)/(1000*60*60*24);
     if(diffDays <= 15 && diffDays >=0) isNew=true;
@@ -122,7 +114,7 @@ function parseURLData(url=""){
   return {version, releaseDate, isNew};
 }
 
-// CSV -> JSON
+// --- تحويل CSV إلى JSON ---
 function parseCSV(csv){
   const rows = csv.split(/\r?\n/).map(r=>r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
   const headers = rows[0];
@@ -130,14 +122,17 @@ function parseCSV(csv){
     let item={};
     headers.forEach((h,i)=>{ item[h.trim()] = row[i]?row[i].trim().replace(/"/g,""):"-"; });
     const extra = parseURLData(item.url);
-    item.version=extra.version; item.date=extra.releaseDate; item.isNew=extra.isNew;
-    item.name = item.name || "-"; item.size=item.size||"-"; item.image=item.image||"";
-    item.shortUrl = getShortUrl(item.url);
+    item.version=extra.version; 
+    item.date=extra.releaseDate; 
+    item.isNew=extra.isNew;
+    item.name = item.name || "-"; 
+    item.size=item.size||"-"; 
+    item.image=item.image||"";
     return item;
   });
 }
 
-// جلب كل الشيتات
+// --- جلب كل الشيتات ---
 async function fetchSheets(){
   for(let sheet of SHEETS){
     try{
@@ -146,23 +141,39 @@ async function fetchSheets(){
       allDevices.push(...parseCSV(csv));
     }catch(err){ console.error("فشل جلب:",sheet.name,err); }
   }
+
+  // --- التحقق من باراميتر البحث ---
+  const params = new URLSearchParams(window.location.search);
+  const searchQuery = params.get("search");
+  if(searchQuery){
+    searchInput.value = searchQuery;
+  }
+
+  // تشغيل البحث تلقائيًا بعد تحميل البيانات
+  const event = new Event('input');
+  searchInput.dispatchEvent(event);
+
+  // عرض جميع النتائج أوليًا
   showResults(allDevices);
 }
-fetchSheets();
 
-// البحث الحي
-document.getElementById("searchInput").addEventListener("input",()=>{
+// --- البحث الحي ---
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input",()=>{
   let q = searchInput.value.trim().toLowerCase();
   let filtered = allDevices.filter(d=> (d.name||"").toLowerCase().includes(q));
   showResults(filtered);
 });
 
-// عرض النتائج مع فرز الجديد أولًا
+// --- عرض النتائج ---
 function showResults(list){
   let box = document.getElementById("results");
   box.innerHTML="";
   if(!list.length){ box.innerHTML="<p>لا توجد نتائج</p>"; return; }
+
+  // فرز الجديد أولًا
   list.sort((a,b)=> a.isNew && !b.isNew?-1: !a.isNew && b.isNew?1:0);
+
   list.forEach(item=>{
     box.innerHTML+=`
       <div class="card" onclick='showPopup(${JSON.stringify(item).replace(/'/g,"\\'")})'>
@@ -176,9 +187,8 @@ function showResults(list){
   });
 }
 
-// عرض البطاقة المنبثقة
+// --- البطاقة المنبثقة ---
 const overlay = document.getElementById("overlay");
-const cardPopup = document.getElementById("cardPopup");
 const popupImg = document.getElementById("popupImg");
 const popupName = document.getElementById("popupName");
 const popupVersion = document.getElementById("popupVersion");
@@ -195,39 +205,36 @@ function showPopup(item){
   popupDate.textContent="تاريخ التحديث: "+item.date;
   popupSize.textContent="الحجم: "+item.size;
   popupDownload.href=item.url;
-// مشاركة واتساب
-const waText = `📺 ${item.name}\n🔗 ${window.location.origin + window.location.pathname}?search=${encodeURIComponent(item.name)}`;
-popupWhats.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+  popupDownload.target="_blank";
+
+  // مشاركة واتساب مع رابط الموقع ووضع اسم الرسيفر في البحث
+  const waText = `📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.origin + window.location.pathname}?search=${encodeURIComponent(item.name)}`;
+  popupWhats.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
 
   overlay.classList.add("show");
 }
 
-// إغلاق النافذة
+// --- إغلاق البطاقة ---
 function closePopupFunc(){ overlay.classList.remove("show"); }
 closePopup.onclick = closePopupFunc;
-cardPopup.onclick = e=> e.stopPropagation(); // منع إغلاق عند النقر داخل البطاقة
-overlay.onclick = closePopupFunc;
 
-// دعم زر العودة في الجوال
-window.addEventListener("popstate", function(event){
+// إغلاق عند النقر على البطاقة نفسها
+overlay.onclick = e=>{ 
+  if(e.target===overlay) closePopupFunc(); 
+}
+
+// --- إغلاق عند زر العودة في الجوال ---
+window.addEventListener("popstate", ()=>{
   if(overlay.classList.contains("show")){
     closePopupFunc();
-    history.pushState(null, null, location.href); // إعادة حالة لتفادي الخروج
-  }
-});
-history.pushState(null, null, location.href);
-
-window.addEventListener("DOMContentLoaded", ()=>{
-  const params = new URLSearchParams(window.location.search);
-  const searchQuery = params.get("search");
-  if(searchQuery){
-    searchInput.value = searchQuery;
-    const event = new Event('input');
-    searchInput.dispatchEvent(event); // يشغّل البحث تلقائيًا
+    history.pushState(null,null,window.location.href); // منع الرجوع للصفحة السابقة
   }
 });
 
+// إضافة حالة جديدة لتاريخ البطاقة
+fetchSheets();
 </script>
 
 </body>
 </html>
+
