@@ -9,180 +9,182 @@
   --bg:#0f1724; --card:#0b1220; --txt:white; --accent:#01c38d; --glass:rgba(255,255,255,0.04);
 }
 body { background:var(--bg); font-family:"Tajawal",sans-serif; margin:0; padding:20px; color:var(--txt);}
-.container{max-width:800px; margin:auto;}
-.search-box {background:var(--glass); border:1px solid #1e293b; padding:12px; border-radius:10px; margin-bottom:20px; display:flex; gap:10px;}
-input {flex:1; background:none; border:none; color:var(--txt); padding:10px; outline:none;}
-.card {background:var(--card); padding:10px 12px; border-radius:10px; margin:6px 0; border:1px solid #1f2a3a; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.3s;}
-.card:hover { border-color:var(--accent);}
-.card img {width:60px; height:40px; object-fit:cover; border-radius:6px; flex-shrink:0;}
-.card .info {flex:1; display:flex; flex-direction:column;}
-.card .name {font-weight:600; font-size:15px; display:flex; align-items:center; gap:6px;}
-.card .version {font-size:13px; color:#8ef; margin-top:2px;}
-.new-badge {background:#01c38d; color:#012; padding:2px 6px; border-radius:6px; font-size:12px; font-weight:bold;}
-/* Overlay */
+.container{max-width:800px;margin:auto;}
+.search-box {background:var(--glass);border:1px solid #1e293b;padding:12px;border-radius:10px;margin-bottom:20px;display:flex;gap:10px;}
+input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:none;}
+
+.results {display:flex;flex-direction:column;gap:10px;}
+.card {background:var(--card);padding:8px 12px;border-radius:10px;display:flex;gap:10px;align-items:center;border:1px solid #1f2a3a;cursor:pointer;transition:0.25s;}
+.card:hover {border-color:var(--accent);}
+.card img {width:60px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.card-info {display:flex;flex-direction:column;flex:1;min-width:0;}
+.card-info h3 {margin:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-info p {margin:2px 0 0;font-size:13px;color:#8ef;}
+.new-badge {background:#01c38d;color:#012;padding:2px 6px;border-radius:6px;font-size:11px;font-weight:bold;margin-left:6px;}
+
+/* البطاقة المنبثقة */
 .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:10px;}
 .overlay.show{display:flex;}
-.overlay .card-detail{background:var(--card); border-radius:14px; max-width:500px; width:100%; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.4); position:relative;}
-.overlay .close-btn{position:absolute; top:10px; left:14px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;}
-.overlay .card-detail img{width:100%; height:auto; border-radius:10px; margin-bottom:12px;}
-.overlay .card-detail h2{margin:0 0 6px 0;}
-.overlay .details{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px;}
-.overlay .details div{background:rgba(255,255,255,0.03); padding:8px; border-radius:8px; flex:1; text-align:center;}
-.overlay .actions{display:flex; justify-content:center; gap:10px; flex-wrap:wrap;}
-.overlay .actions a{background:transparent; border:1px solid rgba(255,255,255,0.1); padding:8px 12px; border-radius:10px; color:#fff; text-decoration:none; display:flex; align-items:center; gap:6px; transition:0.3s;}
-.overlay .actions a:hover{border-color:var(--accent); color:var(--accent);}
-@media(max-width:500px){.card{flex-direction:column;align-items:flex-start;}.card img{width:100%;height:auto;}}
+.card-popup{position:relative;background:var(--card);border-radius:16px;width:90%;max-width:400px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.close-btn{position:absolute;top:10px;left:14px;background:none;border:none;color:#fff;font-size:24px;font-weight:bold;cursor:pointer;line-height:1;}
+.close-btn:hover{color:var(--accent);}
+.popup-img{width:100%;height:auto;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:12px;}
+.popup-info h2{margin:0 0 6px 0;font-size:18px;}
+.popup-info p{margin:2px 0;color:#8ef;font-size:13px;}
+.popup-actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;}
+.popup-actions a{flex:1;justify-content:center;background:var(--accent);color:#012;padding:8px;border-radius:10px;text-decoration:none;display:flex;align-items:center;gap:5px;}
+
+/* الجوال */
+@media(max-width:600px){
+  .card {flex-direction:row;align-items:center;padding:6px;}
+  .card img{width:50px;height:35px;}
+  .card-info h3{font-size:14px;}
+  .card-info p{font-size:12px;}
+  .card-popup{padding:12px;}
+  .popup-img{max-height:150px;}
+  .popup-info h2{font-size:16px;}
+  .popup-info p{font-size:12px;}
+  .popup-actions a{font-size:12px;padding:6px;}
+}
 </style>
 </head>
 <body>
+
 <div class="container">
   <h2>🔍 بحث عن الرسيفرات</h2>
   <div class="search-box">
     <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
   </div>
-  <div id="results"></div>
+  <div id="results" class="results"></div>
 </div>
 
-<!-- Overlay البطاقة المنبثقة -->
+<!-- البطاقة المنبثقة -->
 <div id="overlay" class="overlay">
-  <div class="card-detail">
-    <button id="closeCard" class="close-btn">✖</button>
-    <img id="detailImg" src="" alt="">
-    <h2 id="detailName"></h2>
-    <div class="details">
-      <div><b>الإصدار</b><div id="detailVersion"></div></div>
-      <div><b>تاريخ التحديث</b><div id="detailDate"></div></div>
-      <div><b>الحجم</b><div id="detailSize"></div></div>
+  <div class="card-popup">
+    <button id="closePopup" class="close-btn">✖</button>
+    <img id="popupImg" class="popup-img" src="" alt="">
+    <div class="popup-info">
+      <h2 id="popupName"></h2>
+      <p id="popupVersion"></p>
+      <p id="popupDate"></p>
+      <p id="popupSize"></p>
     </div>
-    <div class="actions">
-      <a id="downloadLink" target="_blank">⬇ تحميل</a>
-      <a id="whatsappShare" target="_blank">واتساب</a>
+    <div class="popup-actions">
+      <a id="popupDownload" href="#" target="_blank">⬇ تحميل</a>
+      <a id="popupWhats" href="#" target="_blank">واتساب</a>
     </div>
   </div>
 </div>
 
 <script>
-// إعداد الشيتات
+// الشيتات
 const SHEET_ID = "2PACX-1vQXW9rev-EPbzS_pXVSa3xoylhsjYwHFE8n0xa9wDoxrkMdFgsn8srViSagCj8kqI-iHpEwpk5w2FuF";
 const SHEETS = [
-  { name:"Sheet1", gid:"1337227866" },
-  // مثال
+  { name: "Sheet1", gid: "1337227866" },
 ];
 let allDevices = [];
 
 // رابط CSV لكل شيت
 function getCSVUrl(sheet){ return `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&gid=${sheet.gid}`; }
 
-// استخراج الإصدار والتاريخ وزيادة يوم واحد
+// استخراج الإصدار والتاريخ مع زيادة يوم
 function parseURLData(url=""){
   let versionMatch = url.match(/V(\d+(?:\.\d+)?)/i);
-  let version = versionMatch ? "V"+versionMatch[1]:"-";
-
+  let version = versionMatch ? "V"+versionMatch[1] : "-";
   let dateMatch = url.match(/(\d{8})/);
-  let releaseDate="-";
-  let isNew=false;
+  let releaseDate="-"; let isNew=false;
   if(dateMatch){
-    let d=dateMatch[1];
+    let d = dateMatch[1];
     let updateDate = new Date(`${d.slice(4,8)}-${d.slice(2,4)}-${d.slice(0,2)}`);
     updateDate.setDate(updateDate.getDate()+1);
     const day = String(updateDate.getDate()).padStart(2,'0');
     const month = String(updateDate.getMonth()+1).padStart(2,'0');
     const year = updateDate.getFullYear();
-    releaseDate=`${day}/${month}/${year}`;
+    releaseDate = `${day}/${month}/${year}`;
     const today = new Date();
-    const diffDays=(today-updateDate)/(1000*60*60*24);
-    if(diffDays<=15 && diffDays>=0) isNew=true;
+    const diffDays = (today - updateDate)/(1000*60*60*24);
+    if(diffDays <= 15 && diffDays >=0) isNew=true;
   }
   return {version, releaseDate, isNew};
 }
 
-// تحويل CSV إلى JSON
+// CSV -> JSON
 function parseCSV(csv){
   const rows = csv.split(/\r?\n/).map(r=>r.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
   const headers = rows[0];
   return rows.slice(1).map(row=>{
     let item={};
-    headers.forEach((h,i)=>item[h.trim()]=row[i]?row[i].trim().replace(/"/g,""):"-");
+    headers.forEach((h,i)=>{ item[h.trim()] = row[i]?row[i].trim().replace(/"/g,""):"-"; });
     const extra = parseURLData(item.url);
-    item.version = extra.version;
-    item.date = extra.releaseDate;
-    item.isNew = extra.isNew;
-    item.name=item.name||"-";
-    item.size=item.size||"-";
-    item.image=item.image||"";
+    item.version=extra.version; item.date=extra.releaseDate; item.isNew=extra.isNew;
+    item.name = item.name || "-"; item.size=item.size||"-"; item.image=item.image||"";
     return item;
   });
 }
 
-// جلب البيانات
+// جلب كل الشيتات
 async function fetchSheets(){
   for(let sheet of SHEETS){
     try{
       const res = await fetch(getCSVUrl(sheet));
       const csv = await res.text();
       allDevices.push(...parseCSV(csv));
-    }catch(err){console.error("فشل جلب البيانات من:",sheet.name,err);}
+    }catch(err){ console.error("فشل جلب:",sheet.name,err); }
   }
   showResults(allDevices);
 }
 fetchSheets();
 
 // البحث الحي
-document.getElementById("searchInput").addEventListener("input", ()=>{
-  const q = searchInput.value.trim().toLowerCase();
-  const filtered = allDevices.filter(d=>(d.name||"").toLowerCase().includes(q));
+document.getElementById("searchInput").addEventListener("input",()=>{
+  let q = searchInput.value.trim().toLowerCase();
+  let filtered = allDevices.filter(d=> (d.name||"").toLowerCase().includes(q));
   showResults(filtered);
 });
 
-// عرض النتائج وفرز الجديد أولًا
+// عرض النتائج مع فرز الجديد أولًا
 function showResults(list){
-  const box = document.getElementById("results");
+  let box = document.getElementById("results");
   box.innerHTML="";
-  if(!list.length){box.innerHTML="<p>لا توجد نتائج</p>";return;}
-
-  list.sort((a,b)=>a.isNew&&!b.isNew?-1:!a.isNew&&b.isNew?1:0);
-
+  if(!list.length){ box.innerHTML="<p>لا توجد نتائج</p>"; return; }
+  list.sort((a,b)=> a.isNew && !b.isNew?-1: !a.isNew && b.isNew?1:0);
   list.forEach(item=>{
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <img src="${item.image}" alt="${item.name}">
-      <div class="info">
-        <div class="name">${item.name} ${item.isNew?'<span class="new-badge">جديد 🔥</span>':''}</div>
-        <div class="version">الإصدار: ${item.version}</div>
-        <div class="version">تاريخ التحديث: ${item.date}</div>
+    box.innerHTML+=`
+      <div class="card" onclick='showPopup(${JSON.stringify(item).replace(/'/g,"\\'")})'>
+        ${item.image?`<img src="${item.image}" alt="${item.name}">`:""}
+        <div class="card-info">
+          <h3>${item.name} ${item.isNew?'<span class="new-badge">جديد 🔥</span>':""}</h3>
+          <p>الإصدار: ${item.version} | التاريخ: ${item.date}</p>
+        </div>
       </div>
     `;
-    card.onclick = ()=>showOverlay(item);
-    box.appendChild(card);
   });
 }
 
-// Overlay التفاصيل
+// عرض البطاقة المنبثقة
 const overlay = document.getElementById("overlay");
-const closeCard = document.getElementById("closeCard");
-const detailImg = document.getElementById("detailImg");
-const detailName = document.getElementById("detailName");
-const detailVersion = document.getElementById("detailVersion");
-const detailDate = document.getElementById("detailDate");
-const detailSize = document.getElementById("detailSize");
-const downloadLink = document.getElementById("downloadLink");
-const whatsappShare = document.getElementById("whatsappShare");
+const popupImg = document.getElementById("popupImg");
+const popupName = document.getElementById("popupName");
+const popupVersion = document.getElementById("popupVersion");
+const popupDate = document.getElementById("popupDate");
+const popupSize = document.getElementById("popupSize");
+const popupDownload = document.getElementById("popupDownload");
+const popupWhats = document.getElementById("popupWhats");
+const closePopup = document.getElementById("closePopup");
 
-function showOverlay(item){
-  detailImg.src = item.image;
-  detailName.textContent = item.name;
-  detailVersion.textContent = item.version;
-  detailDate.textContent = item.date;
-  detailSize.textContent = item.size;
-  downloadLink.href = item.url;
-  whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${item.url}`)}`;
+function showPopup(item){
+  popupImg.src=item.image || "";
+  popupName.textContent=item.name;
+  popupVersion.textContent="الإصدار: "+item.version;
+  popupDate.textContent="تاريخ التحديث: "+item.date;
+  popupSize.textContent="الحجم: "+item.size;
+  popupDownload.href=item.url;
+  popupWhats.href=`https://wa.me/?text=${encodeURIComponent(`📺 ${item.name}\n🔢 الإصدار: ${item.version}\n📅 التاريخ: ${item.date}\n🔗 ${window.location.href}`)}`;
   overlay.classList.add("show");
 }
-
-closeCard.onclick=()=>overlay.classList.remove("show");
-overlay.onclick=e=>{if(e.target===overlay) overlay.classList.remove("show");};
+closePopup.onclick = ()=>overlay.classList.remove("show");
+overlay.onclick = e=>{if(e.target===overlay) overlay.classList.remove("show");}
 </script>
+
 </body>
 </html>
-``
