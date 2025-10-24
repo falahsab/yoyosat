@@ -58,17 +58,11 @@ a { color:var(--accent); text-decoration:none }
 </div>
 
 <script>
-// **معلومات الشيت**
 const SHEET_ID = "1fvlOESmcjdE1DaiivSe8FB_pMp85MWzOajS9OWRzmow";
-const SHEET_NAME = "Sheet3";
-const API_KEY = "YOUR_GOOGLE_API_KEY";
-
-// رابط جلب البيانات
-const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
-
+const SHEETS = ["Sheet1", "Sheet3"]; // عدل أسماء الأوراق التي تريدها
 let allDevices = [];
 
-// دالة استخراج الإصدار والتاريخ من الرابط
+// استخراج الإصدار والتاريخ من الرابط
 function parseURLData(url) {
   if (!url) return { version: "-", releaseDate: "-" };
 
@@ -85,28 +79,38 @@ function parseURLData(url) {
   return { version, releaseDate };
 }
 
-// جلب البيانات من Google Sheets
-fetch(DATA_URL)
-  .then(r => r.json())
-  .then(data => {
-    let rows = data.values;
-    let headers = rows[0];
-    rows.slice(1).forEach(r => {
-      let item = {};
-      headers.forEach((h,i)=> item[h]=r[i]);
-      const extra = parseURLData(item.url);
-      item.version = extra.version;
-      item.date = extra.releaseDate;
-      allDevices.push(item);
-    });
-    showResults(allDevices);
+// قراءة CSV وتحويله لمصفوفة JSON
+function csvToArray(str) {
+  let rows = str.split("\n").map(r => r.split(","));
+  let headers = rows[0];
+  return rows.slice(1).map(row => {
+    let item = {};
+    headers.forEach((h,i)=> item[h]=row[i]);
+    const extra = parseURLData(item.url);
+    item.version = extra.version;
+    item.date = extra.releaseDate;
+    return item;
   });
+}
 
-// بحث حي أثناء الكتابة
+// جلب البيانات من كل ورقة
+async function fetchSheets() {
+  for (let sheet of SHEETS) {
+    let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheet}`;
+    let res = await fetch(url);
+    let csv = await res.text();
+    allDevices.push(...csvToArray(csv));
+  }
+  showResults(allDevices);
+}
+
+fetchSheets();
+
+// بحث حي
 document.getElementById("searchInput").addEventListener("input", ()=>{
   let q = searchInput.value.trim().toLowerCase();
   let filtered = allDevices.filter(d =>
-    d.name.toLowerCase().includes(q)
+    (d.name || "").toLowerCase().includes(q)
   );
   showResults(filtered);
 });
@@ -133,7 +137,7 @@ function showResults(list) {
   });
 }
 </script>
-
 </body>
 </html>
+
 
