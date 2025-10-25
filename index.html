@@ -177,11 +177,13 @@ function showResults(list){
   list.forEach(item=>{
     box.innerHTML+=`
       <div class="card" onclick='showPopup(${JSON.stringify(item).replace(/'/g,"\\'")})'>
+      
         ${item.image?`<img src="${item.image}" alt="${item.name}">`:""}
         <div class="card-info">
-          <h3>${item.name} ${item.isNew?'<span class="new-badge">جديد 🔥</span>':""}</h3>
+          <h3>${item.name}</h3>
           <p>الإصدار: ${item.version} | التاريخ: ${item.date}</p>
         </div>
+          ${item.isNew?`<span class="new-badge">جديد 🔥</span>`:""}
       </div>
     `;
   });
@@ -251,4 +253,5 @@ document.getElementById("clearSearch").addEventListener("click", () => {
 
 </body>
 </html>
+
 
