@@ -1,4 +1,4 @@
-const CACHE_NAME = "jedwal-cache-v1";
+const CACHE_NAME = "yoyosat-cache-v1";
 const urlsToCache = [
   "/",
   "/index.html",
