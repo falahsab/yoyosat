@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>🔍 بحث عن الرسيفرات</title>
 <style>
 :root {
@@ -60,9 +61,17 @@ input {flex:1;background:none;border:none;color:var(--txt);padding:10px;outline:
 
 <div class="container">
   <h2>🔍 بحث عن الرسيفرات</h2>
-  <div class="search-box">
-    <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
-  </div>
+<div class="search-box">
+  <button id="clearSearch" style="
+    background:none;
+    border:none;
+    color:var(--txt);
+    font-size:18px;
+    cursor:pointer;
+  ">✖</button>
+  <input id="searchInput" type="text" placeholder="اكتب اسم الرسيفر...">
+</div>
+
   <div id="results" class="results"></div>
 </div>
 
@@ -142,7 +151,16 @@ async function fetchSheets(){
   }
   showResults(allDevices);
 }
-fetchSheets();
+
+// بعد تحميل كل البيانات، تحقق من ?search= في الرابط
+fetchSheets().then(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchQuery = urlParams.get('search');
+  if(searchQuery){
+    searchInput.value = searchQuery; // ضع القيمة في مربع البحث
+    searchInput.dispatchEvent(new Event('input')); // شغّل البحث تلقائياً
+  }
+});
 
 // البحث الحي
 document.getElementById("searchInput").addEventListener("input",()=>{
@@ -160,11 +178,13 @@ function showResults(list){
   list.forEach(item=>{
     box.innerHTML+=`
       <div class="card" onclick='showPopup(${JSON.stringify(item).replace(/'/g,"\\'")})'>
+      
         ${item.image?`<img src="${item.image}" alt="${item.name}">`:""}
         <div class="card-info">
-          <h3>${item.name} ${item.isNew?'<span class="new-badge">جديد 🔥</span>':""}</h3>
+          <h3>${item.name}</h3>
           <p>الإصدار: ${item.version} | التاريخ: ${item.date}</p>
         </div>
+          ${item.isNew?`<span class="new-badge">جديد 🔥</span>`:""}
       </div>
     `;
   });
@@ -190,15 +210,15 @@ function showPopup(item){
   popupDownload.href = item.url;
 
   // تعديل رابط واتساب ليشمل المصدر
-const whatsappText = `
-📡 ${item.name}
+// رابط واتساب يضع اسم الرسيفر في البحث ضمن الموقع
+const searchURL = `${window.location.origin}${window.location.pathname}?search=${encodeURIComponent(item.name)}`;
+const whatsappText = `📡 ${item.name}
 🔢 الإصدار: ${item.version}
 📅 التاريخ: ${item.date}
-المصدر: ${window.location.href}
-⬇ تحميل: ${item.url}
-`;
+🔗 الرابط: ${searchURL}`;
 
 popupWhats.href = "https://wa.me/?text=" + encodeURIComponent(whatsappText);
+
 
   overlay.classList.add("show");
 
@@ -225,9 +245,15 @@ function closePopupFunc(){
     history.replaceState(null, "");
   }
 }
+document.getElementById("clearSearch").addEventListener("click", () => {
+  window.location.href = "/"; // رابط الصفحة الرئيسية
+});
 
 
 </script>
 
 </body>
 </html>
+
+
+
