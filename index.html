@@ -150,7 +150,7 @@ async function fetchSheets(){
   }
   showResults(allDevices);
 }
-fetchSheets();
+
 // بعد تحميل كل البيانات، تحقق من ?search= في الرابط
 fetchSheets().then(() => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -251,3 +251,4 @@ document.getElementById("clearSearch").addEventListener("click", () => {
 
 </body>
 </html>
+
